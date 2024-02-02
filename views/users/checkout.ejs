@@ -1,0 +1,401 @@
+<%-include('../users/layouts/header.ejs') %>
+<%-include('../users/layouts/navBar.ejs') %>
+<div class="hero">
+	<div class="container">
+		<div class="row justify-content-between">
+			<div class="col-lg-5">
+				<div class="intro-excerpt">
+					<h1>Checkout</h1>
+				</div>
+			</div>
+			<div class="col-lg-7">
+				
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End Hero Section -->
+
+<div class="untree_co-section">
+<div class="container">
+  <div class="row mb-5">
+	<div class="col-md-12">
+	  <!-- <div class="border p-4 rounded" role="alert">
+		Returning customer? <a href="#">Click here</a> to login
+	  </div> -->
+	</div>
+  </div>
+  <div class="row">
+	<div class="col-md-6 mb-5 mb-md-0">
+	  <h2 class="h3 mb-3 text-black">Billing Address</h2>
+	  <div class="p-3 p-lg-5 border bg-white">
+		<div class="col-lg-9 cart-item-box">
+			<h5 class="text-dark mb-3">1. &nbsp; Select a delivery address</h5>
+	
+			<% if(address!=0){%>
+			  <form action="/checkout" method="post" id="addressForm">
+				<% for(i=address.length-1;i>=0;i--) {%>
+	
+				  <label class="p-3 border rounded-4 m-2 custom-label">
+					<div class="form-check d-flex align-items-center mx-4">
+					  <input class="form-check-input " type="radio" value="<%=address[i]._id %>" name="address"
+						id="Radio<%=address[i]._id %>" <% if(i==address.length-1){ %> checked <%}%>
+						>
+						<div class="mx-5">
+						  <p class="text-dark"><b>
+							  <%=address[i].fullName%> <br>
+							</b> Location : <%=address[i].city%>, <%=address[i].district%>, <%=address[i].state%>
+								  <br>
+								  <b style="color: #043a6c;">
+									<span class="material-symbols-outlined" style="font-size: 13px;">Mobile:</span>
+									<%=address[i].mobile%>
+								  </b></p>
+						  <p>
+							Pincode : <%=address[i].pincode%>
+						  </p>
+						</div>
+					</div>
+				  </label>
+	
+	
+				  <%}%>
+			  </form>
+	
+			  <%}else{%>
+				<div class=" text-center w-100 card">
+				  <h6 class="mt-2 ">You have no shipping Address</h6>
+				  <p class="">Kindly add a shipping address to proceed.</p>
+				  <button type="button" class="btn btn-outline-primary-2 mx-auto  mt-1 " data-bs-toggle="modal"
+					data-bs-target="#exampleModal" style="border-radius: 0px; font-size: 13px; width: 30rem;"> +
+					Add a new address
+				  </button>
+				</div>
+				<%}%>
+				  <%if(address!=0){%>
+					<button type="button" class="btn btn-outline-primary-2 mt-3" data-bs-toggle="modal"
+					  data-bs-target="#exampleModal" style="border-radius: 0px; font-size: 13px;"> + Add a new
+					  address</button>
+					<%}%>
+	
+					  <hr>
+	
+		  </div>
+
+		
+
+
+	  </div>
+	  <!-- <button type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#exampleModal">
+		Add Address +
+	  </button> -->
+	  
+	  <!-- Modal -->
+	  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+		  <div class="modal-content">
+			<div class="modal-header">
+			  <h5 class="modal-title" id="exampleModalLabel">Address</h5>
+			  <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			  </button> -->
+			</div>
+			<div class="modal-body">
+				<form action="/addAddress" method="post" onsubmit="return validAddress()">
+					<h2 class="checkout-title mb-3">Add Address</h2>
+	
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="fullName">Full Name</label>
+								<input type="text" class="form-control" id="fullName" name="fullName">
+								<p id="name-error" style="color: red;"></p>
+							</div>
+	
+							<div class="form-group">
+								<label for="phone">Mobile Number</label>
+								<input type="tel" class="form-control" id="phone" name="mobile">
+								<p id="mobile-error" style="color: red;"></p>
+							</div>
+						</div>
+	
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="state">State</label>
+								<input type="text" class="form-control" id="state" name="state">
+								<p id="state-error" style="color: red;"></p>
+							</div>
+	
+							<div class="form-group">
+								<label for="district">District</label>
+								<input type="text" class="form-control" id="district" name="district">
+								<p id="district-error" style="color: red;"></p>
+							</div>
+						</div>
+					</div>
+	
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="city">City</label>
+								<input type="text" class="form-control" id="city" name="city">
+								<p id="city-error" style="color: red;"></p>
+							</div>
+						</div>
+	
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="pinCode">Pincode</label>
+								<input type="text" class="form-control" id="pinCode" name="pincode">
+								<p id="pincode-error" style="color: red;"></p>
+							</div>
+						</div>
+	
+						<div class="col-12 text-center mb-3">
+							<button type="submit" class="btn btn-dark">Submit</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<!-- <div class="modal-footer">
+			  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			  <button type="submit" class="btn btn-dark">Submit</button>
+			</div> -->
+		  </div>
+		</div>
+	  </div>
+	</div>
+	<!-- Button trigger modal -->
+
+	<div class="col-md-6">
+
+	  <div class="row mb-5">
+		<div class="col-md-12">
+		  <h2 class="h3 mb-3 text-black">Coupon Code</h2>
+		  <div class="p-3 p-lg-5 border bg-white">
+
+			<label for="c_code" class="text-black mb-3">Enter your coupon code if you have one</label>
+			<div class="input-group w-75 couponcode-wrap">
+			  <input type="text" class="form-control me-2" id="c_code" placeholder="Coupon Code" aria-label="Coupon Code" aria-describedby="button-addon2">
+			  <div class="input-group-append">
+				<button class="btn btn-black btn-sm" type="button" id="button-addon2">Apply</button>
+			  </div>
+			</div>
+
+		  </div>
+		</div>
+	  </div>
+
+	  <div class="row mb-5">
+		<div class="col-md-12">
+		  <h2 class="h3 mb-3 text-black">Your Order</h2>
+		  <div class="p-3 p-lg-5 border bg-white">
+			<table class="table site-block-order-table mb-5">
+			  
+				<thead>
+					<tr>
+					  <th>Product</th>
+					  <th>Total</th>
+					</tr>
+				  </thead>
+				  <% products.forEach((value,index)=> { %>
+
+					<tbody>
+					  <tr>
+						<td>
+						  <a>
+							<%= value.productId.productName %> (Set: <%= value.quantity %>)
+						  </a>
+						  <input id="quantity" type="hidden" value="<%= value.quantity %>">
+						  <input id="productID" type="hidden" value="<%= value.productId %>">
+						</td>
+						<td>
+						  <% if (value.productId.discountedPrice > 0) { %>
+							<%= value.productId.discountedPrice * value.quantity%> 
+						   <% } else { %>
+						  <%= (value.productId.price) * (value.quantity) %>
+						  <% } %>
+						</td>
+					  </tr>
+					  <% }) %>
+
+						<tr class="summary-subtotal">
+						  <td>Subtotal:</td>
+						  <td >
+							<%= total %>
+						  </td>
+						</tr>
+
+						<!-- End .summary-subtotal -->
+						<tr>
+						  <td>Shipping:</td>
+						  <td>Free shipping</td>
+						</tr>
+						<tr class="summary-total">
+						  <td>Total:</td>
+
+						  <td id="total1">
+							<%= total %>
+						  </td>
+						</tr>
+						<!-- End .summary-total -->
+					</tbody>
+				</table>
+
+				<!-- <div class="border p-3 mb-3">
+					<h3 class="h6 mb-0">
+						<a class="d-block" data-bs-toggle="collapse" href="#collapsebank" role="button" aria-expanded="false" aria-controls="collapsebank">Cash on Delivery</a>
+					</h3>
+				
+					<div class="collapse" id="collapsebank">
+						<div class="py-2">
+							<p class="mb-0">Pay in cash when your order is delivered to your doorstep.</p>
+						</div>
+					</div>
+				</div>
+				
+				<div class="border p-3 mb-3">
+					<h3 class="h6 mb-0">
+						<a class="d-block" data-bs-toggle="collapse" href="#collapsecheque" role="button" aria-expanded="false" aria-controls="collapsecheque">Online Payment</a>
+					</h3>
+				
+					<div class="collapse" id="collapsecheque">
+						<div class="py-2">
+							<p class="mb-0">Make your payment online using various payment methods. Your order will be processed once the payment is confirmed.</p>
+						</div>
+					</div>
+				</div>
+				
+				<div class="border p-3 mb-5">
+					<h3 class="h6 mb-0">
+						<a class="d-block" data-bs-toggle="collapse" href="#collapsepaypal" role="button" aria-expanded="false" aria-controls="collapsepaypal">Credit Card</a>
+					</h3>
+				
+					<div class="collapse" id="collapsepaypal">
+						<div class="py-2">
+							<p class="mb-0">Pay with your credit card securely. Your order will be processed once the payment is confirmed.</p>
+						</div>
+					</div>
+				</div>
+				
+				<div class="form-group">
+					<button class="btn btn-black btn-lg py-3 btn-block" onclick="window.location='thankyou.html'">Place Order</button>
+				</div> -->
+                <div class="d-flex align-items-center mt-3">
+                    <div class="mr-2">
+                      <input required type="radio" id="COD" name="payment" value="COD" />
+                    </div>
+                    <a href="" class="d-block text-dark" for="pay1">Cash On Delivery</a>
+                  </div>
+
+                  <div class="d-flex align-items-center">
+                    <div class="mr-2">
+                      <input required type="radio" id="payment" name="payment" value="Online Payment" checked />
+                    </div>
+                    <a href="" class="d-block text-dark" for="pay2">Online Payment</a>
+                  </div>
+
+                  <div class="d-flex align-items-center">
+                    <div class="mr-2">
+                      <input required type="radio" id="wallet" name="payment" value="Wallet" />
+                    </div>
+                    <a href="" class="d-block text-dark" for="pay3">Wallet</a>
+                  </div>
+
+                  <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block mt-2">
+                    <span class="btn-text">Place Order</span>
+                    <span class="btn-hover-text">Proceed to Checkout</span>
+                  </button>
+                </div>
+		  </div>
+		</div>
+	  </div>
+
+	</div>
+  </div>
+  <!-- </form> -->
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+
+  function placeOrder() {
+  const placeOrderBtn = document.querySelector('.btn-order');
+  placeOrderBtn.addEventListener('click', async function (event) {
+	event.preventDefault();
+
+	try {
+	  const addressId = document.querySelector('input[name="address"]:checked').value;
+	  const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+	  // ======= for wallet balnce and amount comparing =======
+	  const totelAmount = document.getElementById("total1").innerHTML
+
+	  const data = {
+		address: addressId,
+		payment: paymentMethod,
+		amount: totelAmount,
+	  
+	  };
+
+	  const response = await fetch('/placeOrder', {
+		method: 'POST',
+		headers: {
+		  'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(data)
+	  });
+
+	  console.log(response);
+
+	  if (response.status === 200) {
+		const contentType = response.headers.get('content-type');
+		if (contentType && contentType.includes('application/json')) {
+		  const responseData = await response.json();
+		  Swal.fire({
+			title: 'Order Placed Successfully',
+			imageUrl: '/static/img/Animation - 1698988378670.gif',
+			imageAlt: 'Custom Image',
+			html: `
+			<p>Thank you for your purchase! Now we're preparing for the shipment!...</p>
+			<a href="/orderDetails" class="btn btn-primary">Order Details</a>
+			<a href="/products" class="btn btn-secondary">Continue Shopping</a> `,
+			didOpen: () => {
+			  Swal.showLoading();
+			},
+			width: '40%', // Adjust the width value as needed
+		  })
+
+		} else {
+		  throw new Error('Response was not in JSON format');
+		}
+
+	  } else if (response.status === 201) {
+		// Display SweetAlert for insufficient wallet balance
+		Swal.fire({
+		  icon: 'error',
+		  title: 'Insufficient Wallet Balance',
+		  text: 'Your wallet balance is insufficient. Please choose a different payment method or recharge your wallet.',
+		});
+	  } else if (response.status === 202) {
+		Swal.fire({
+		  icon: 'error',
+		  title: 'Stock exeed',
+		  text: 'product stock is less than your order quantity',
+		});
+	  }
+	  else {
+		const responseData = await response.json();
+		razorPayment(responseData.order);
+
+	  }
+	} catch (error) {
+	  console.error('There was an error:', error);
+	  Swal.fire('An error occurred while placing the order');
+	}
+  });
+}
+
+placeOrder();
+</script>
+  
+<%-include('../users/layouts/footer.ejs') %>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>SHOECART</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/login.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 d-none d-md-block hihi">
+                <img src="/static/img/image 1.png" alt="Your Photo" class="img-fluid" style="width:75vh;">
+            </div>
+            <div class="col-md-6 col-12 mt-4 hai ml2- pt-5">
+                <div class="signup-form mt-3">
+                    <div class="logoimg pb-4">
+                        <img class="sizeForImage" src="/static/userAssets/img/logo.png" alt=""
+                            style="width:30vh;">
+                    </div>
+                    <div class="title pb-3">
+                        <h1 style="color:black; size: 20px; font-family: Arial, Helvetica, sans-serif;">Login</h1>         
+                     </div>
+                                  <% 
+                                    if(typeof message !== 'undefined'){
+                                        %>
+                                        
+                                            <h5 id="invalid-msg" class=" text-danger text-center"><%- message %></h5>
+                                       
+                                        <%
+                                    } 
+                                    %>
+                    <form action="/login"  method="post" onsubmit="return validateForm()" novalidate>
+                        <input type="email" class="form-control input-with-border" name="email" placeholder="Email">
+                        <input type="password" class="form-control input-with-border" name="password" placeholder="Password">
+                        <!-- <div class="forgotpassword d-flex justify-content-end">
+                            <a href="forgetpassword" class="text-center text-dark small">Forgot Password</a>
+                        </div> -->
+                        <div class="form-group">
+                            <a id="kkkk" class="login_botten_tag" href="login">
+                                <button class="btn btn-block mt-4 bg-dark buttensignup text-white">Login</button>
+                            </a>
+                        </div>
+                        <div class="text-danger mt-3">
+                        </div>
+                        <p class="text-center text-dark small">Dont't Have An account? <a class="text-dark"
+                                href="/signup">
+                            Signup Here!</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function validateForm() {
+          const email = document.forms["loginForm"]["email"].value;
+          const password = document.forms["loginForm"]["password"].value;
+          const errorElement = document.getElementById("invalid-msg");
+    
+          errorElement.textContent = ""; // Clear any previous error messages
+    
+          // Validate email
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(email)) {
+            errorElement.textContent = "Please enter a valid email address.";
+            return false;
+          }
+    
+          // Validate password (example, adjust as needed)
+          if (password.length < 8) {
+            errorElement.textContent = "Password must be at least 8 characters long.";
+            return false;
+          }
+    
+          // Add more validation rules as needed, e.g., for password strength
+          // ...
+    
+          return true; // All validations passed
+        }
+      </script>
+        
+        
+    
+</body>
+</html>

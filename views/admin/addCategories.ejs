@@ -1,0 +1,75 @@
+<%-include('../admin/layouts/header.ejs') %>
+<%-include('../admin/layouts/sideBar.ejs') %>
+<%-include('../admin/layouts/navBar.ejs') %>
+
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Add New Category</h4>
+          <hr class="white-line">
+          <form class="forms-sample" action="" method="post"  onsubmit="return validateCategory()" novalidate>
+            <div class="form-group row">
+              <div class="col-12 col-md-12 mt-2">
+                <label for="exampleInputName1">Category Name</label>
+                <input type="text" class="form-control text-light mb-3" name="category_name" id="exampleInputName1"
+                  placeholder="name" required><br>
+                  
+                <label for="exampleInputDescription">Category Description</label>
+                <textarea class="form-control text-light" name="category_description" id="exampleInputDescription"
+                  placeholder="Description" required style="height: 100px;"></textarea><br>
+
+                  <% 
+                  if(typeof message !== 'undefined'){
+                      %>
+                      <h5 id="invalid-msg" class=" text-danger text-center"><%- message %></h5>
+                      <%
+                  }
+                  %>
+
+                <div class="text-center mt-3"> 
+                  <button type="submit" class="btn btn-lg btn-inverse-primary mr-2">Add Category</button>
+                </div>
+
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function validateCategory() {
+    // Get the entered category name
+    var categoryName = document.getElementById('exampleInputName1').value.trim();
+    
+    // Get all existing category names (you need to fetch this dynamically or have it pre-loaded)
+   // Example existing categories
+    
+    // Check for empty category name
+    if (categoryName === '') {
+      document.getElementById('invalid-msg').innerText = 'Category name cannot be empty.';
+      return false;
+    }
+    
+    // Check for spaces in category name
+    if (categoryName.indexOf(' ') !== -1) {
+      document.getElementById('invalid-msg').innerText = 'Category name cannot contain spaces.';
+      return false;
+    }
+
+    // Check if the category name already exists
+    if (existingCategories.includes(categoryName)) {
+      document.getElementById('invalid-msg').innerText = 'Category name already exists.';
+      return false;
+    }
+    
+    // If everything is fine, allow form submission
+    return true;
+  }
+</script>
+
+<%-include('../admin/layouts/footer.ejs') %>

@@ -1,0 +1,418 @@
+<%-include('../users/layouts/header.ejs') %>
+<%-include('../users/layouts/navBar.ejs') %>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<style>
+
+    .nav-dashboard .nav-link {
+        color: #333;
+        font-weight: 500;
+        transition: color 0.3s ease;
+    }
+
+    .nav-dashboard .nav-link:hover {
+        color: gray;
+    }
+
+    a:hover {
+        color: gray;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 991px) {
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .aside {
+            padding-left: 0;
+        }
+
+        .nav-dashboard {
+            flex-direction: column; 
+        }
+
+        .nav-dashboard .nav-item {
+            width: 100%; 
+            text-align: center; 
+            margin-bottom: 5px; 
+        }
+    }
+    .btn-1{
+        background-color:#333;
+        color:#f3f3f9;
+        border-radius:20px;
+        width:162%;
+    }
+</style>
+
+<main class="main">
+    <div class="page-header text-center m-t-85">
+        <div class="container">
+            <h1 class="page-title text-dark">My Account</h1>
+        </div>
+    </div>
+    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-4">
+        <div class="container">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">Home</a></li>
+                <li class="breadcrumb-item"><a href="">My Profile</a></li>
+            </ol>
+        </div>
+    </nav>
+
+    <div class="page-content">
+        <div class="dashboard">
+            <div class="container-fluid p-0">
+                <div class="row aside">
+                    <div class="col-md-4 col-lg-2" style="background-color: rgb(207, 203, 203);">
+                        <h3 class="text-center my-3">My Account</h3>
+                        <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                            <li class="nav-item ">
+                                <a
+                                    class="nav-link active"
+                                    id="tab-dashboard-link"
+                                    data-toggle="tab"
+                                    href="#tab-dashboard"
+                                    role="tab"
+                                    aria-controls="tab-dashboard"
+                                    aria-selected="true"
+                                    >My Profile</a
+                                >
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link"
+                                    id="tab-account-link"
+                                    data-toggle="tab"
+                                    href="#tab-account"
+                                    role="tab"
+                                    aria-controls="tab-account"
+                                    aria-selected="false"
+                                    >Edit Profile</a
+                                >
+                            </li>
+                            
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link"
+                                    id="tab-address-link"
+                                    data-toggle="tab"
+                                    href="#tab-address"
+                                    role="tab"
+                                    aria-controls="tab-address"
+                                    aria-selected="false"
+                                    >Manage Address</a
+                                >
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link"
+                                    href="/viewOrder"
+                                    >My Orders</a
+                                >
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link"
+                                    href="/wallet"
+                                    >My Wallet
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a
+                                    class="nav-link"
+                                    href="/referral"
+                                    >My Referral
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/logout">Sign Out</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- End .col-lg-3 -->
+
+                    <div class="col-md-8 col-lg-9 pt-3">
+                        <div class="tab-content">
+                            <div
+                                class="tab-pane fade show active"
+                                id="tab-dashboard"
+                                role="tabpanel"
+                                aria-labelledby="tab-dashboard-link"
+                            >
+                            <h4 class="text-center fs-1 font-monospace">My Profile</h4>
+
+                                <form action="#">
+                                    <div class="row">
+                                        <div class="col-sm-6 mb-2">
+                                            <label>First Name</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                value="<%= user.firstName %>"
+                                                disabled
+                                            />
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label>Last Name</label>
+                                            <input type="text" class="form-control" value="<%=user.lastName %>" disabled />
+                                        </div>
+                                    </div>
+
+
+                                    <div class="row">
+                                    <div class="col-sm-12 mb-2">
+                                    <label>Email address</label>
+                                    <input type="email" class="form-control" value="<%= user.email %>" disabled />
+                                    </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>Mobile Number</label>
+                                            <input
+                                                type="number"
+                                                class="form-control"
+                                                value="<%= user.mobile %>"
+                                                name="pincode"
+                                                disabled
+                                            />
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+                                <a href="/address">
+                                    <div class="card col-md-5 col-10 m-2 shadow-sm" id="addressDiv" style="border-radius: 7px; background: #f3f3f9; cursor: pointer; height: 86px">
+                                        <div class="card-body d-flex flex-column align-items-center justify-content-center" style="height: 190px">
+                                            <h5 class="m-0" style="font-weight: 300">Add New Address</h5>
+                                        </div>
+                                    </div>
+                                </a>
+                                
+                                <div class="row">
+                                    <% if (address) { %> <% for (let i = 0; i < address.address.length; i++) { %>
+                                    <div class="col-md-6 col-12 mb-3 mt-3">
+                                        <div class="card p-4" style="background: #f3f3f9; border-radius: 10px">
+                                            <div class="card-body">
+                                                <h6 class="card-title" style="font-size: 15px">
+                                                    <%= address.address[i].fullName %>
+                                                </h6>
+                                                <p class="card-text mt-3">Number: <%= address.address[i].mobile %></p>
+                                                <p class="card-text">
+                                                    Location: <%= address.address[i].state %>, <%=
+                                                    address.address[i].district %>, <%= address.address[i].city %>
+                                                </p>
+                                                <p class="card-text">Pincode: <%= address.address[i].pincode %></p>
+
+                                                <hr class="my-3" />
+                                                <div class="d-flex justify-content-between">
+                                                    <a href="/editAddress?id=<%= address.address[i]._id %>">
+                                                        <button
+                                                            class="btn-1"
+                                                            type="button"
+                                                            id="editBTN"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target=""
+                                                        >
+                                                            Edit
+                                                        </button>
+                                                    </a>
+                                                    <button
+                                                    class="btn btn-outline-primary-2"
+                                                    type="button"
+                                                    onclick="removeAddress('<%= address.address[i]._id %>')"
+                                                >
+                                                    Remove
+                                                </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% } %> <% } else { %> <% } %>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
+                                <h4 class="text-center fs-1 font-monospace">Edit Profile</h4>
+                                <form action="/updateUser" method="post" onsubmit="return validEditAddress()">
+                                    <div class="row">
+                                        <div class="col-sm-6 mb-2">
+                                            <label>First Name</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                name="Fname"
+                                                id="Fname"
+                                                value="<%=user.first_name %>"
+                                            />
+                                            <span id="Fname-error" class="text-danger"></span>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label>Last Name</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                name="Lname"
+                                                id="Lname"
+                                                value="<%=user.last_name %>"
+                                            />
+                                            <span id="Lname-error" class="text-danger"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-12 mb-2">
+                                            <label for="">Email Address</label>
+                                    <input
+                                        type="email"
+                                        class="form-control"
+                                        name="email"
+                                        value="<%= user.email %>"
+                                        disabled
+                                    />
+                                </div>
+                            </div>
+
+                                    <div class="row">
+                                        <div class="col-sm-6 mb-2">
+                                            <label>Mobile Number</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                name="mobile"
+                                                id="mobile"
+                                                value="<%= user.mobile %>"
+                                                name="pincode"
+                                            />
+                                            <span id="mobile-error" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                    <button type="submit" class="btn btn-outline-primary-2">
+                                        <span>Save Changes</span>
+                                    </button>
+                                </div>
+                            </div>
+                                </form>
+
+                                <hr />
+                                <h6 class="fs-1 font-monospace">Change Password</h6>
+                                <form action="/resetPassword" method="post" onsubmit="return validatePasswords()">
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-sm-6 mb-2">
+                                                <label>Current Password</label>
+                                                <input type="password" name="oldPassword" class="form-control" />
+                                                <span id="current-password-error" class="text-danger"></span>
+                                            </div>
+                                            <!-- End .col-sm-6 -->
+                                            <div class="col-sm-6">
+                                                <label>Create New Password</label>
+                                                <input type="password" name="newPassword" class="form-control" />
+                                                <span id="new-password-error" class="text-danger"></span>
+                                            </div>
+                                            <!-- End .col-sm-6 -->
+                                        </div>
+                                        <!-- End .row -->
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                        <button type="submit" class="btn btn-outline-primary-2">
+                                            <span>Save Changes</span>
+                                        </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <input type="hidden" id="userId" value="<%= user._id %>" />
+                            </div>
+                            <!-- .End .tab-pane -->
+                        </div>
+                    </div>
+                    <!-- End .col-lg-9 -->
+                </div>
+                <!-- End .row -->
+            </div>
+            <!-- End .container -->
+        </div>
+        <!-- End .dashboard -->
+    </div>
+    <!-- End .page-content -->
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> 
+
+
+<script>
+    window.onload = function () {
+        const editForm = document.querySelector('form[action="/updateUser"]');
+        const resetPasswordForm = document.querySelector('form[action="/resetPassword"]');
+
+        editForm.onsubmit = function () {
+            return validEditAddress();
+        };
+
+        resetPasswordForm.onsubmit = function () {
+            return validatePasswords();
+        };
+    };
+</script>
+<script>
+    $(document).ready(function () {
+        const editForm = document.querySelector('form[action="/updateUser"]');
+        const resetPasswordForm = document.querySelector('form[action="/resetPassword"]');
+
+        editForm.onsubmit = function () {
+            // You can add any additional logic here if needed
+            return validEditAddress();
+        };
+
+        // Initialize the Bootstrap modal when the button is clicked
+        $('#editProfileModalButton').on('click', function () {
+            $('#editProfileModal').modal('show');
+        });
+
+        resetPasswordForm.onsubmit = function () {
+            return validatePasswords();
+        };
+    });
+</script>
+
+
+<script>
+    function removeAddress(id) {
+        console.log("Removing address with ID:", id);
+
+        $.ajax({
+            url: "/deleteAddress/" + id,
+            type: "DELETE",
+            success: function(response) {
+                console.log(response);
+                
+                if (response.remove == 1) {
+                    Swal.fire({
+                        title: "Success!",
+                        text: "Address removed!",
+                        icon: "success",
+                        timer: 2000,
+                    }).then(function() {
+                        location.reload();
+                    });
+                }
+            },
+            error: function(error) {
+                console.error("Error during address removal:", error);
+            }
+        });
+    }
+</script>
+
+
+<%-include('../users/layouts/footer.ejs') %>

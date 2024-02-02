@@ -1,0 +1,132 @@
+<%-include('../admin/layouts/header.ejs') %>
+<%-include('../admin/layouts/sidebar.ejs') %>
+<%-include('../admin/layouts/navbar.ejs') %>
+
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title">PRODUCTS</h2>
+
+          <form action="" method="get" class="nav-link mt-2 mt-md-0 col-12 d-lg-flex search mb-2">
+            <input type="text" name="key" class="form-control mb-1 text-light" placeholder="Search Products" id="searchInput">
+          </form>
+
+          <div class="table-responsive table-container">
+            <table class="table" id="user-table">
+              <thead class="text-white">
+                <tr class="text-white">
+                  <th>Product</th>
+                  <th>Brand</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Quantity</th>
+                  <th>Description</th>
+                  <th>Edit</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% products.forEach(product => { %>
+                  <tr>
+                    <td>
+                      <div class="product-image-container">
+                        <img class="" alt="image" src="/static/adminAssets/images/products/<%= product.images[0] %>" alt="<%= product.productName %>">
+                      </div>
+                      <span><%= product.productName %></span>
+                    </td>
+                    <td><%= product.brand %></td>
+                    <td><%= product.category.name %></td>
+
+                    <td><%= product.price %></td>
+                    <td><%= product.quantity %></td>
+                    <td class="description-column"><%= product.description %></td>
+                    <td>
+                      <a href="/admin/editProduct?id=<%= product._id %>">
+                        <button type="button" class="btn btn-outline-secondary btn-icon-text">
+                          Edit <i class="mdi mdi-file-check btn-icon-append"></i>
+                        </button>
+                      </a>
+                    </td>
+                    <td>
+                      <% if (product.status === false) { %>
+                        <a href="/admin/unlistProduct?id=<%= product._id %>">
+                          <button type="button" class="btn btn-inverse-success btn-fw">
+                            List
+                          </button>
+                        </a>
+                      <% } else { %>
+                        <a href="/admin/unlistProduct?id=<%= product._id %>">
+                          <button type="button" class="btn btn-inverse-danger btn-fw">
+                            Unlist
+                          </button>
+                        </a>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% })%>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<style>
+  .description-column {
+    max-width: 250px; /* Adjust the maximum width as needed */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .product-image-container {
+    width: 100px; 
+    height: 100px; 
+    overflow: hidden; /
+}
+
+  /* Add media query for smaller screens to adjust the description column width */
+  
+    .description-column {
+      max-width: 150px; /* Adjust as needed for smaller screens */
+    }
+  
+
+  /* Increase the height of all table cells (th and td) */
+  .table th,
+  .table td {
+    padding: 20px 15px; /* Adjust the padding to increase cell height */
+  }
+  
+
+  .table-container {
+    overflow-x: auto; /* Add a horizontal scrollbar if the content overflows */
+  }
+
+  #user-table {
+    width: 100%; /* Set the table width to 100% */
+  }
+
+  #user-table th, #user-table td {
+    white-space: nowrap; /* Prevent text wrapping */
+  }
+
+  #user-table th:last-child,
+  #user-table td:last-child {
+    /* Adjust the width of the last column as needed */
+    min-width: 150px; /* Minimum width to ensure visibility of the button */
+  }
+</style>
+
+
+
+
+   
+
+<%-include('../admin/layouts/footer.ejs') %>
