@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>SHOECART</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/signup.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 d-none d-md-block hihi pt-4">
+                <img class="sizeorImage" src="/static/img/image2.png" alt="">
+            </div>
+            <div class="col-md-6 col-12 pl-5 hai">
+                <div class="signup-form mt-3">
+                    <div class="logoimg pb-4">
+                        <img class="sizeForImage" src="/static/userAssets/img/logo.png" alt="">
+                    </div>
+                    <form action="/signup" id="form" method="post" onsubmit="return validRegister()" >
+                        <div class="input-control mt-3 ">
+                            <input type="text" id="firstname" class="form-control input-with-border" name="firstname" placeholder="First Name">
+                            <div  id="Fname-error" class="error"></div>
+                        </div>
+                        <div class="input-control mt-3">
+                            <input type="text" id="lastname" class="form-control input-with-border" name="lastname" placeholder="Last Name">
+                            <div id="Lname-error" class="error"></div>
+                        </div>
+                        <div class="input-control mt-3 ">
+                            <input type="email" id="email" class="form-control input-with-border" name="email" placeholder="Email">
+                            <div id="email-error" class="error"> </div>
+                        </div>
+                        <div class="input-control mt-3 ">
+                            <input type="tel" id="phonenumber" class="form-control input-with-border" name="phonenumber" placeholder="Phone Number">
+                            <div id="mobile-error" class="error"></div>
+                        </div>
+                        <div class="input-control mt-3 ">
+                            <input type="password" id="password" class="form-control input-with-border" name="password" placeholder="Password">
+                            <div id="password-error" class="error"></div>
+                        </div>
+                        <div class="input-control mt-3 ">
+                            <input type="password" id="confirm_password" class="form-control input-with-border" name="confirm_password" placeholder="Confirm Password">
+                            <div  id="password-mismatch" class="error"></div>                        
+                        </div>
+                            
+                        <div class="form-group">
+                            <a id="kkkk" class="login_botten_tag" href="/signup">
+                                <button class="btn btn-block mt-4 bg-dark buttensignup text-white">Sign Up</button>
+                            </a>
+                        </div>
+                        <p class="text-center text-dark small">Already have an account? <a class="text-dark" href="/login">Login here!</a></p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+
+</html>
+<!-- <script src="/static/userAssets/js/validation.js"></script> -->
+
+<script>
+    setTimeout(function () {
+    // Your code to hide the message after a delay goes here
+    var invalidMsg = document.getElementById("invalid-msg");
+    if (invalidMsg) {
+      invalidMsg.style.display = "none";
+    }
+  }, 3000);
+  function validRegister() {
+    const firstName = document.getElementById('firstname').value.trim();
+    const lastName = document.getElementById('lastname').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const mobile = document.getElementById('phonenumber').value.trim();
+    const password = document.getElementById('password').value;
+    const cpassword = document.getElementById('confirm_password').value;
+  
+    // Clear any previous error messages
+    const errorElements = document.querySelectorAll(".error");
+    errorElements.forEach(element => element.textContent = "");
+
+    // Validate empty fields
+    if (firstName === "" || lastName === "" || email === "" || phoneNumber === "" || password === "" || confirmPassword === "") {
+      displayError("Fname-error", "Please enter your first name.");
+      displayError("Lname-error", "Please enter your last name.");
+      displayError("email-error", "Please enter your email address.");
+      displayError("mobile-error", "Please enter your phone number.");
+      displayError("password-error", "Please enter a password.");
+      displayError("password-mismatch", "Please confirm your password.");
+      return false;
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      displayError("email-error", "Please enter a valid email address.");
+      return false;
+    }
+
+    // Validate phone number format
+    const mobileRegex = /^\+?\d{1,3}?[- ]?\(?\d{3}\)?[- ]?\d{3}[- ]?\d{4}$/;
+    if (!mobileRegex.test(phoneNumber)) {
+      displayError("mobile-error", "Please enter a valid phone number.");
+      return false;
+    }
+
+    // Validate password strength
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      displayError("password-error", "Password must be at least 8 characters long and contain a mix of uppercase, lowercase, numbers, and special characters.");
+      return false;
+    }
+
+    // Confirm password
+    if (password !== confirmPassword) {
+      displayError("password-mismatch", "Passwords do not match.");
+      return false;
+    }
+
+    return true; // All validations passed
+  }
+
+  function displayError(errorId, errorMessage) {
+    const errorElement = document.getElementById(errorId);
+    errorElement.textContent = errorMessage;
+  }
+
+</script>
+  

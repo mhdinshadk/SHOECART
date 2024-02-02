@@ -1,0 +1,222 @@
+<%-include('../users/layouts/header.ejs') %>
+<%-include('../users/layouts/navBar.ejs') %>
+
+               <!-- <a href="/addToCart/<%= product._id %>','<%= user %>" class="btn_3  trans-04 js-addcart-detail">add to cart</a>
+              <button class="btn_3 flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail" 
+              onclick="addCart('<%= product._id %>','<%= user %>')">
+              Add to cart -->
+
+            
+
+     <div class = "card-wrapper">
+      <div class = "card">
+        <!--card left -->
+        <div class = "product-imgs">
+          <div class = "img-display">
+            <div class = "img-showcase">
+             
+               <%for(let i =0 ; i<product.images.length ; i++){%>
+              <img src="/static/adminAssets/images/products/<%=product.images[i]%>" alt = "shoe image">
+
+              <%}%>
+             
+            </div>
+          </div>
+          <div class = "img-select">
+            <%for(let i =0 ; i<product.images.length ; i++){%>
+            <div class = "img-item">
+              <a href = "#" data-id = "<%=i+1%>">
+                <img src="/static/adminAssets/images/products/<%=product.images[i]%>" alt = "shoe image">
+              </a>
+            </div>
+            <%}%>
+            
+          </div>
+        </div>
+        <!-- card right -->
+        <div class = "product-content">
+          <h2 class = "product-title"><%=product.productName%></h2>
+          <a href = "#" class = "product-link"> <%= product.category.name%></a>
+          <!-- <div class = "product-rating">
+            <i class = "fas fa-star"></i>
+            <i class = "fas fa-star"></i>
+            <i class = "fas fa-star"></i>
+            <i class = "fas fa-star"></i>
+            <i class = "fas fa-star-half-alt"></i>
+            <span>4.7(21)</span>
+          </div> -->
+    
+          <div class = "product-price">
+            <!-- <p class = "last-price">Old Price: <span>$257.00</span></p> -->
+            <p class = "new-price">New Price: <span>₹<%=product.price%></span></p>
+          </div>
+    
+          <div class = "product-detail">
+            <h2>about this item: </h2>
+            <p>  <%=product.description%></p>
+
+            
+            <!-- <ul>
+              <li>Color: <span>Black</span></li>
+              <li>Available: <span>in stock</span></li>
+              <li>Category: <span>Shoes</span></li>
+              <li>Shipping Area: <span>All over the world</span></li>
+              <li>Shipping Fee: <span>Free</span></li>
+            </ul> -->
+          </div>
+    
+          <div class="purchase-info">
+            <button type="button" class="btn trans-04 js-addcart-detail" onclick="addToCart('<%= product._id %>','<%= user %>')">
+              Add to Cart <i class="fas fa-shopping-cart"></i>
+          </button>
+            <button type="button" class="btn">Compare</button>
+        </div>
+    
+          <!-- <div class = "social-links">
+            <p>Share At: </p>
+            <a href = "#">
+              <i class = "fab fa-facebook-f"></i>
+            </a>
+            <a href = "#">
+              <i class = "fab fa-twitter"></i>
+            </a>
+            <a href = "#">
+              <i class = "fab fa-instagram"></i>
+            </a>
+            <a href = "#">
+              <i class = "fab fa-whatsapp"></i>
+            </a>
+            <a href = "#">
+              <i class = "fab fa-pinterest"></i>
+            </a>
+          </div> -->
+        </div>
+      </div>
+    </div>
+    <script>
+      const imgs = document.querySelectorAll('.img-select a');
+      const imgBtns = [...imgs];
+      let imgId = 1;
+  
+      imgBtns.forEach((imgItem) => {
+        imgItem.addEventListener('click', (event) => {
+          event.preventDefault();
+          imgId = imgItem.dataset.id;
+          slideImage();
+        });
+      });
+  
+      function slideImage() {
+        const displayWidth = document.querySelector('.img-showcase img:first-child').clientWidth;
+        document.querySelector('.img-showcase').style.transform = `translateX(${- (imgId - 1) * displayWidth}px)`;
+      }
+  
+      window.addEventListener('resize', slideImage);
+    </script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script> 
+<script>
+  //   function addToCart(productId, userId) {
+  //   console.log("addToCart function called with id: " + productId);
+  //   $.ajax({
+  //       url: "/addTocart",
+  //       method: "post",
+  //       encoded:true,
+  //       data: {
+  //           id: productId,
+  //           user: userId
+  //       },
+        
+  //   }).done((data) => {
+  //       if (data.success) {
+  //           console.log(data);
+
+  //           Swal.fire({
+  //               icon: 'success',
+  //               title: data.message,
+  //               showConfirmButton: false,
+  //               timer: 1000
+  //           });
+  //       } else{
+  //         alert('failed')
+  //            window.location.href= '/login'
+  //       }
+  //   }).fail((xhr, status, error) => {
+  //       // Handle AJAX request failure
+  //       console.error('Error:', error);
+  //   });
+  // }
+
+    // function addToCart(productId, userId) {
+    //     console.log("addToCart function called with id: " + productId);
+    //     $.ajax({
+    //         url: "/addTocart",
+    //         method: "post",
+    //         data: {
+    //             id: productId,
+    //             user: userId
+    //         },
+    //     })
+    //     .done(function(data) {
+    //         if (data.success) {
+    //             console.log(data);
+
+    //             Swal.fire({
+    //                 icon: 'success',
+    //                 title: data.message,
+    //                 showConfirmButton: false,
+    //                 timer: 1000
+    //             });
+    //         } else {
+    //             alert('failed')
+    //             window.location.href= '/login'
+    //         }
+    //     })
+    //     .fail(function(xhr, status, error) {
+    //         // Handle AJAX request failure
+    //         console.error('Error:', error);
+    //     });
+    // }
+    function addToCart(productId, userId) {
+    console.log("addToCart function called with id: " + productId);
+    
+    fetch('/addTocart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id: productId,
+            user: userId
+        }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log(data);
+
+            Swal.fire({
+                icon: 'success',
+                title: data.message,
+                showConfirmButton: false,
+                timer: 1000
+            });
+        } else {
+            alert('failed');
+            window.location.href = '/login';
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+
+
+</script>
+
+
+
+</script>
+			<%-include('../users/layouts/footer.ejs') %>

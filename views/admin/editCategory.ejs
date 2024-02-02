@@ -1,0 +1,72 @@
+
+<%-include('../admin/layouts/header.ejs') %>
+<%-include('../admin/layouts/sideBar.ejs') %>
+<%-include('../admin/layouts/navBar.ejs') %>
+
+<div class="main-panel">
+  <div class="content-wrapper">
+
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Edit Category</h4>
+            <form class="forms-sample" action="updateCategory" method="post" novalidate >
+    
+              <% if (typeof message !== 'undefined') { %>
+                <h5 id="invalid-msg" class="alert alert-danger text-center mt-3"><%- message %></h5>
+              <% } %>
+    
+              <div class="form-group">
+                <label for="exampleInputName1">Category Name</label>
+                <input type="text" class="form-control  text-white" id="exampleInputName1" name="categoryname" placeholder=" Category Name" value="<%= data.name %>" required>
+                
+              </div> 
+              <br>     
+              <div class="form-group">
+              
+                <label for="exampleTextarea1">Category Description</label>
+                <input type="text" class="form-control  text-white" id="exampleInputName1" name="categorydes" placeholder=" Category Name" value="<%= data.description %>" required>
+              </div>
+              <br>
+              <div class="input-container">
+                <input type="hidden" name="id" value="<%= data._id %>">
+              </div>
+
+              <div class="row mt-5">
+                <div class="col-md-12 text-center">
+                  <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                  <button class="btn btn-dark" id="cancelButton" type="button">Cancel</button>
+                </div>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+
+  </div>
+</div>
+
+
+<script>
+    // ========= cancel button redirecting ==========
+    document.addEventListener("DOMContentLoaded", function () {
+  const cancelButton = document.getElementById("cancelButton");
+  cancelButton.addEventListener("click", function () {
+    window.location.href = "/admin/viewCategories"; // Redirect to the desired route
+  });
+});
+
+</script>
+
+<script>
+  setTimeout(function () {
+    // Your code to hide the message after a delay goes here
+    var invalidMsg = document.getElementById("invalid-msg");
+    if (invalidMsg) {
+      invalidMsg.style.display = "none";
+    }
+  }, 3000);
+</script>
+
+<%-include('../admin/layouts/footer.ejs') %>

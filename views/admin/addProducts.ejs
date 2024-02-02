@@ -1,0 +1,208 @@
+<%-include('../admin/layouts/header.ejs') %>
+<%-include('../admin/layouts/sidebar.ejs') %>
+<%-include('../admin/layouts/navbar.ejs') %>
+
+<div class="main-panel">
+  <div class="content-wrapper">
+    <div class="col-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title">PRODUCTS</h2>
+            <form class="forms-sample" action="" method="post" enctype="multipart/form-data" onsubmit="return validateForm()" novalidate>
+            <div class="row">
+              <%  if(typeof message !== 'undefined'){
+                %>  <h5 id="invalid-msg" class=" text-danger text-center"><%- message %></h5> <%
+             } 
+            %>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="exampleInputName1">Product Name</label>
+                  <input type="text" class="form-control text-white" id="exampleInputName1" name="productname" placeholder="Product Name">
+                  <span id="productNameError" class="text-danger"></span>
+                </div><br>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="brand">Brand</label>
+                  <input type="text" class="form-control text-white" id="brand" name="brand" placeholder="Brand">
+                  <span id="brandError" class="text-danger"></span>
+                </div><br>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="category">Category</label>
+                  <select class="form-control text-white" id="category" name="category" required>
+                    <% category.forEach(category => { %>
+                      <option value="<%= category._id %>"><%= category.name %></option>
+                    <% }); %>
+                  </select>
+                </div><br><br><br>
+                <!-- <div class="form-group">
+                  <label for="size">Size</label>
+                  <input type="text" class="form-control text-white" id="size" name="size" placeholder="Size">
+                  <span id="sizeError" class="text-danger"></span>
+                </div><br> -->
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="price">Price</label>
+                  <input type="text" class="form-control text-white" id="inlineFormInputName1" name="price" placeholder="Price">
+                  <span id="priceError" class="text-danger"></span>
+                </div><br>
+                <div class="form-group">
+                  <label for="quantity">Quantity</label>
+                  <div class="input-group">
+                    <input type="text" class="form-control text-white" id="quantity" name="quantity" placeholder="Quantity">
+                  </div>
+                  <span id="quantityError" class="text-danger"></span>
+                </div><br>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea class="form-control text-white" id="exampleTextarea1" rows="4" name="description"></textarea>
+              <span id="descriptionError" class="text-danger"></span>
+            </div><br>
+            
+            <div class="container-fluid">
+              <label for="">File upload (Multiple Images)</label>
+              <div class="row">
+                <div class="col-md-6 mb-0">
+                  <div class="dynamic-image-inputs">
+                    <div class="input-group">
+                      <input type="file" name="images" class="form-control" id="imageInput" multiple>
+                      <div class="input-group-append">
+                        <button class="btn btn-primary add-image-input" type="button">Add Image</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <span id="imageError" class="text-danger"></span>
+            </div>
+            
+          
+          <div class="row mt-5">
+            <div class="col-md-12 text-center">
+              <button type="submit" class="btn btn-primary mr-2">Submit</button>
+              <button class="btn btn-dark" id="cancelButton">Cancel</button>
+            </div>
+          </div>
+        </form>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+ <script>
+  // =========== image deleting ==============
+  document.addEventListener("DOMContentLoaded", function () {
+    const addImageButton = document.querySelector(".add-image-input");
+    const dynamicImageInputs = document.querySelector(".dynamic-image-inputs");
+    addImageButton.addEventListener("click", function () {
+      const inputGroup = document.createElement("div");
+      inputGroup.className = "input-group";
+      const inputFile = document.createElement("input");
+      inputFile.type = "file";
+      inputFile.name = "images";
+      inputFile.className = "form-control";
+      inputFile.required = true;
+      const inputGroupAppend = document.createElement("div");
+      inputGroupAppend.className = "input-group-append";
+      const removeButton = document.createElement("button");
+      removeButton.className = "btn btn-danger remove-image-input";
+      removeButton.type = "button";
+      removeButton.textContent = "Remove";
+      removeButton.addEventListener("click", function () {
+        inputGroup.remove();
+      });
+      inputGroupAppend.appendChild(removeButton);
+      inputGroup.appendChild(inputFile);
+      inputGroup.appendChild(inputGroupAppend);
+      dynamicImageInputs.appendChild(inputGroup);
+    });
+  });
+
+  
+  // ========== validation ========
+  function validateForm() {
+  let productName = document.getElementById("exampleInputName1").value;
+  let brand = document.getElementById("brand").value;
+  let category = document.getElementById("category").value;
+  let price = document.getElementById("inlineFormInputName1").value;
+  let quantity = document.getElementById("quantity").value;
+  let description = document.getElementById("exampleTextarea1").value;
+  let images = document.getElementById("imageInput").files;
+
+  // Resetting previous error messages
+  document.getElementById("productNameError").innerHTML = "";
+  document.getElementById("brandError").innerHTML = "";
+  document.getElementById("priceError").innerHTML = "";
+  document.getElementById("quantityError").innerHTML = "";
+  document.getElementById("descriptionError").innerHTML = "";
+  document.getElementById("imageError").innerHTML = "";
+
+  if (productName.trim() === "") {
+    document.getElementById("productNameError").innerHTML = "Please enter a product name";
+    return false;
+  }
+
+  if (brand.trim() === "") {
+    document.getElementById("brandError").innerHTML = "Please enter a brand";
+    return false;
+  }
+
+  if (category === "") {
+    // Validation for category selection
+    // You might want to show an error message or handle this case as required
+    return false;
+  }
+
+  if (price === "" || price <= 1  || isNaN(price)) {
+    document.getElementById("priceError").textContent = "Price must be a valid number greater than 0.";
+    return false;
+  } else {
+    document.getElementById("priceError").textContent = "";
+  }
+
+
+  if (quantity === "" || quantity < 1 || isNaN(quantity)) {
+    document.getElementById("quantityError").textContent = "Quantity must be a valid number of at least 0.";
+    return false;
+  } else {
+    document.getElementById("quantityError").textContent = "";
+  }
+
+  if (description.trim() === "") {
+    document.getElementById("descriptionError").innerHTML = "Please enter a description";
+    return false;
+  }
+
+  if (images.length > 4) {
+    document.getElementById("imageError").innerHTML = "Maximum of 4 images allowed";
+    return false;
+  }
+
+  return true; // Form validated successfully
+}
+
+
+// ========= cancel button redirecting ==========
+document.addEventListener("DOMContentLoaded", function () {
+  const cancelButton = document.getElementById("cancelButton");
+  cancelButton.addEventListener("click", function () {
+    window.location.href = "/admin/viewProduct"; // Navigate to the desired route
+  });
+});
+
+// </script>
+
+
+ <%- include('../admin/layouts/footer.ejs') %>

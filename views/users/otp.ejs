@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>SHOECART</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/login.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <div class="col-md-4 col-8 hai p-5">
+                <div class="signup-form mt-3">
+                    <div class="logoimg pb-4 d-flex justify-content-center align-items-center">
+                        <img class="sizeForImage" src="/static/userAssets/img/logo.png" alt="">
+                    </div>
+                    <h4>OTP Verification</h4>
+                    <% if(typeof message !== 'undefined' ){ %>
+                        <h5 id="invalid-msg" class="text-danger text-center"><%- message %></h5>
+                    <% } %>
+                    <form method="post" action="/otp" onsubmit="return validateOTP()">
+                        <input id="otp" type="number" class="form-control input-with-border" name="otp" placeholder="Enter Your OTP" required="required">
+                        <div class="form-group">
+                            <center><div class="text-danger"></div></center>
+                            <button type="submit" class="btn btn-block mt-4 bg-dark buttensignup text-white">VERIFY</button>
+                        </div>
+                    </form>                   
+                    <p class="text-danger mt-3">Time left: <span id="timer">60</span></p>
+                    <button class="btn btn-danger" id="resendButton" onclick="resendOTP(event)" disabled>
+                        <a id="resendButtonLink" href="#">Resend OTP</a>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        let countdown = 60;
+        let timerElement = document.getElementById('timer');
+        let resendButton = document.getElementById('resendButton');
+        let countdownInterval;
+
+        function updateTimer() {
+            timerElement.textContent = countdown + ' seconds';
+            countdown--;
+
+            if (countdown < 0) {
+                clearInterval(countdownInterval);
+                timerElement.textContent = '0 seconds';
+                resendButton.removeAttribute('disabled');
+            }
+        }
+
+        function resendOTP(event) {
+            event.preventDefault();
+            countdown = 60;
+            timerElement.textContent = countdown + ' seconds';
+            resendButton.disabled = true;
+            countdownInterval = setInterval(updateTimer, 1000);
+            
+            // Simulate OTP resend logic here
+            // For example, you can make an API call to send a new OTP
+            console.log("Resending OTP...");
+        }
+
+        countdownInterval = setInterval(updateTimer, 1000);
+
+        setTimeout(function () {
+            var invalidMsg = document.getElementById("invalid-msg");
+            if (invalidMsg) {
+                invalidMsg.style.display = "none";
+            }
+        }, 3000);
+
+        $(document).ready(function () {
+            $("form").submit(function (event) {
+                event.preventDefault();
+                const otp = $("#otp").val();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/otp",
+                    data: { otp: otp },
+                    success: function (data) {
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Registered Successfully',
+                                text: 'You have successfully verified your OTP and registered.',
+                                icon: 'success',
+                                timer: 2500, 
+                                showConfirmButton: false 
+                            }).then(function () {
+                                window.location.href = '/login';
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: data.message || 'Invalid OTP',
+                                icon: 'error',
+                            });
+                        }
+                    },
+                    error: function () {
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'An error occurred while processing your request',
+                            icon: 'error',
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
