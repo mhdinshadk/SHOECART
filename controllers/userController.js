@@ -12,7 +12,7 @@ const mongoose = require('mongoose');
 
 
 //---------- password security ------------\\
-const securePassword = async (password) => {
+const  securePassword = async (password) => {
 	try{
 		const passwordHash = await bcrypt.hash(password,10);
 		return passwordHash;
@@ -134,44 +134,35 @@ const verifyOtp = async (req, res) => {
   //-------------------- Resend The OTP After The Time ---------------\\
 
   const resendOtp = async (req, res, next) => {
-    try {
-        const currentTime = Date.now() / 1000;
-        if (req.session.otp.expiry != null) {
-            if (currentTime > req.session.otp.expiry) {
-                const newDigit = otpGenerator.generate(6, {
-                    digits: true,
-                    alphabets: false,
-                    specialChars: false,
-                    upperCaseAlphabets: false,
-                    lowerCaseAlphabets: false,
-                });
-                req.session.otp.code = newDigit;
-                const newExpiry = currentTime + 60;
-                req.session.otp.expiry = newExpiry;
-                
-                // Add a log to check if the email is being sent
-                console.log("Sending verification email...");
-                sendVerificationEmail(req.session.email, req.session.otp.code);
-
-                // Log success
-                console.log("OTP has been sent successfully");
-
-                res.render("otp", { message: "OTP has been sent to your email" });
-            } else {
-                res.render("otp", {
-                    message: "You can request a new OTP after the old OTP expires",
-                });
-            }
-        } else {
-            res.send("Please register again");
-        }
-    } catch (error) {
-        // Log errors
-        console.error("Error in resendOtp:", error);
-        next(error);
-    }
-};
-
+	try {
+	  const currentTime = Date.now() / 1000;
+	  if (req.session.otp.expiry != null) {
+		if (currentTime > req.session.otp.expiry) {
+		  const newDigit = otpGenerator.generate(6, {
+			digits: true,
+			alphabets: false,
+			specialChars: false,
+			upperCaseAlphabets: false,
+			lowerCaseAlphabets: false,
+		  });
+		  req.session.otp.code = newDigit;
+		  const newExpiry = currentTime + 60;
+		  req.session.otp.expiry = newExpiry;
+		  sendVerificationEmail(req.session.email, req.session.otp.code);
+		  res.render("otp", { message: "OTP has been send to your emaiil" });
+		} else {
+		  res.render("otp", {
+			message: "You can request a new otp after old otp expires",
+		  });
+		}
+	  } else {
+		res.send("Please register again");
+	  }
+	} catch (error) {
+	  next(error);
+	}
+  };
+  
 
 
   

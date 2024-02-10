@@ -29,8 +29,8 @@
                         </div>
                     </form>                   
                     <p class="text-danger mt-3">Time left: <span id="timer">60</span></p>
-                    <button class="btn btn-danger" id="resendButton" onclick="resendOTP(event)" disabled>
-                        <a id="resendButtonLink" href="#">Resend OTP</a>
+                    <button class="btn btn-dander" id="resendButton" onclick="resendOTP()" disabled>
+                        <a id="resendButtonLink" href="javascript:void(0);">Resend OTP</a>
                     </button>
                 </div>
             </div>
@@ -38,6 +38,7 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+   
     <script>
         let countdown = 60;
         let timerElement = document.getElementById('timer');
@@ -61,10 +62,25 @@
             timerElement.textContent = countdown + ' seconds';
             resendButton.disabled = true;
             countdownInterval = setInterval(updateTimer, 1000);
-            
+
             // Simulate OTP resend logic here
-            // For example, you can make an API call to send a new OTP
-            console.log("Resending OTP...");
+            // For example, you can make a Fetch API call to send a new OTP
+            fetch('/resend-otp', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({}),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                console.log("Resending OTP...");
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
         }
 
         countdownInterval = setInterval(updateTimer, 1000);
@@ -76,43 +92,44 @@
             }
         }, 3000);
 
-        $(document).ready(function () {
-            $("form").submit(function (event) {
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelector('form').addEventListener('submit', function (event) {
                 event.preventDefault();
-                const otp = $("#otp").val();
+                const otp = document.getElementById('otp').value;
 
-                $.ajax({
-                    type: "POST",
-                    url: "/otp",
-                    data: { otp: otp },
-                    success: function (data) {
-                        if (data.success) {
-                            Swal.fire({
-                                title: 'Registered Successfully',
-                                text: 'You have successfully verified your OTP and registered.',
-                                icon: 'success',
-                                timer: 2500, 
-                                showConfirmButton: false 
-                            }).then(function () {
-                                window.location.href = '/login';
-                            });
-                        } else {
-                            Swal.fire({
-                                title: 'Error',
-                                text: data.message || 'Invalid OTP',
-                                icon: 'error',
-                            });
-                        }
+                fetch('/otp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
                     },
-                    error: function () {
+                    body: JSON.stringify({ otp }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Registered Successfully',
+                            text: 'You have successfully verified your OTP and registered.',
+                            icon: 'success',
+                            timer: 2500, 
+                            showConfirmButton: false 
+                        }).then(function () {
+                            window.location.href = '/login';
+                        });
+                    } else {
                         Swal.fire({
                             title: 'Error',
-                            text: 'An error occurred while processing your request',
+                            text: data.message || 'Invalid OTP',
                             icon: 'error',
                         });
                     }
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
                 });
             });
+
+            resendButton.addEventListener('click', resendOTP);
         });
     </script>
 </body>

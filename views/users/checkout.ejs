@@ -1,25 +1,24 @@
 <%-include('../users/layouts/header.ejs') %>
 <%-include('../users/layouts/navBar.ejs') %>
 <div class="hero">
-	<div class="container">
-		<div class="row justify-content-between">
-			<div class="col-lg-5">
-				<div class="intro-excerpt">
-					<h1>Checkout</h1>
-				</div>
-			</div>
-			<div class="col-lg-7">
-				
-			</div>
-		</div>
-	</div>
+    <div class="container">
+        <div class="row justify-content-between">
+            <div class="col-lg-5">
+                <div class="intro-excerpt">
+                    <h1>Checkout</h1>
+                </div>
+            </div>
+            <div class="col-lg-7"></div>
+        </div>
+    </div>
+</div>
 </div>
 <!-- End Hero Section -->
 
 <div class="untree_co-section">
-<div class="container">
-  <div class="row mb-5">
-	<div class="col-md-12">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-md-12">
 	  <!-- <div class="border p-4 rounded" role="alert">
 		Returning customer? <a href="#">Click here</a> to login
 	  </div> -->
@@ -27,70 +26,56 @@
   </div>
   <div class="row">
 	<div class="col-md-6 mb-5 mb-md-0">
-	  <h2 class="h3 mb-3 text-black">Billing Address</h2>
-	  <div class="p-3 p-lg-5 border bg-white">
-		<div class="col-lg-9 cart-item-box">
-			<h5 class="text-dark mb-3">1. &nbsp; Select a delivery address</h5>
-	
-			<% if(address!=0){%>
-			  <form action="/checkout" method="post" id="addressForm">
-				<% for(i=address.length-1;i>=0;i--) {%>
-	
-				  <label class="p-3 border rounded-4 m-2 custom-label">
-					<div class="form-check d-flex align-items-center mx-4">
-					  <input class="form-check-input " type="radio" value="<%=address[i]._id %>" name="address"
-						id="Radio<%=address[i]._id %>" <% if(i==address.length-1){ %> checked <%}%>
-						>
-						<div class="mx-5">
-						  <p class="text-dark"><b>
-							  <%=address[i].fullName%> <br>
-							</b> Location : <%=address[i].city%>, <%=address[i].district%>, <%=address[i].state%>
-								  <br>
-								  <b style="color: #043a6c;">
-									<span class="material-symbols-outlined" style="font-size: 13px;">Mobile:</span>
-									<%=address[i].mobile%>
-								  </b></p>
-						  <p>
-							Pincode : <%=address[i].pincode%>
-						  </p>
+		<h2 class="h3 mb-3 text-black">Billing Address</h2>
+		<div class="p-3 p-lg-5 border bg-white">
+			<div class="col-lg-9 cart-item-box">
+				<h5 class="text-dark mb-3">1. &nbsp; Select a delivery address</h5>
+				<% if(address.length !== 0){ %>
+				<form action="/checkout" method="post" id="addressForm">
+					<% address.forEach((addr, index) => { %>
+					<label class="p-3 border rounded-4 m-2 custom-label">
+						<div class="form-check d-flex align-items-center mx-4">
+							<input class="form-check-input" type="radio" value="<%= addr._id %>"
+								name="address" id="Radio<%= addr._id %>"
+								<% if(index === address.length - 1){ %> checked <% } %>>
+							<div class="mx-5">
+								<p class="text-dark"><b><%= addr.fullName %><br></b> Location: <%= addr.city %>,
+									<%= addr.district %>, <%= addr.state %><br>
+									<b style="color: #043a6c;">
+										<span class="material-symbols-outlined"
+											style="font-size: 13px;">Mobile:</span> <%= addr.mobile %>
+									</b>
+								</p>
+								<p>Pincode: <%= addr.pincode %></p>
+							</div>
 						</div>
+					</label>
+					<% }); %>
+				</form>
+				<% } else { %>
+					<div class="text-center w-100 card">
+						<h6 class="mt-2">You have no shipping Address</h6>
+						<p class="">Kindly add a shipping address to proceed.</p>
+						<button type="button" class="btn btn-outline-primary-2 mx-auto mt-1 " data-bs-toggle="modal"
+							data-bs-target="#exampleModal"
+							style="border-radius: 0px; font-size: 13px; width: 30rem;"> + Add a new address
+						</button>
 					</div>
-				  </label>
-	
-	
-				  <%}%>
-			  </form>
-	
-			  <%}else{%>
-				<div class=" text-center w-100 card">
-				  <h6 class="mt-2 ">You have no shipping Address</h6>
-				  <p class="">Kindly add a shipping address to proceed.</p>
-				  <button type="button" class="btn btn-outline-primary-2 mx-auto  mt-1 " data-bs-toggle="modal"
-					data-bs-target="#exampleModal" style="border-radius: 0px; font-size: 13px; width: 30rem;"> +
-					Add a new address
-				  </button>
-				</div>
-				<%}%>
-				  <%if(address!=0){%>
+					<% } %>
+					<% if(address.length !== 0){ %>
 					<button type="button" class="btn btn-outline-primary-2 mt-3" data-bs-toggle="modal"
-					  data-bs-target="#exampleModal" style="border-radius: 0px; font-size: 13px;"> + Add a new
-					  address</button>
-					<%}%>
-	
-					  <hr>
-	
-		  </div>
-
-		
-
-
-	  </div>
+						data-bs-target="#exampleModal" style="border-radius: 0px; font-size: 13px;"> + Add a new
+						address</button>
+					<% } %>
+					<hr>
+				</div>
+			</div>
 	  <!-- <button type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#exampleModal">
 		Add Address +
 	  </button> -->
 	  
 	  <!-- Modal -->
-	  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog" role="document">
 		  <div class="modal-content">
 			<div class="modal-header">
@@ -302,9 +287,8 @@
                   </div>
 
                   <button type="submit" class="btn btn-outline-primary-2 btn-order btn-block mt-2">
-                    <span class="btn-text">Place Order</span>
-                    <span class="btn-hover-text">Proceed to Checkout</span>
-                  </button>
+					<span class="btn-text">Place Order</span>
+				</button>
                 </div>
 		  </div>
 		</div>
@@ -316,86 +300,161 @@
 </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Add event listener to the labels
+        document.querySelectorAll(".custom-label").forEach(label => {
+            label.addEventListener("click", function () {
+                // Remove the "checked" class from all labels
+                document.querySelectorAll(".custom-label").forEach(label => {
+                    label.classList.remove("checked");
+                });
+                // Add the "checked" class to the clicked label
+                this.classList.add("checked");
+            });
+        });
 
-  function placeOrder() {
-  const placeOrderBtn = document.querySelector('.btn-order');
-  placeOrderBtn.addEventListener('click', async function (event) {
-	event.preventDefault();
+        // AJAX request for placing order
+        async function placeOrder() {
+            const placeOrderBtn = document.querySelector('.btn-order');
+            placeOrderBtn.addEventListener('click', async function (event) {
+                event.preventDefault();
+                try {
+                    const addressId = document.querySelector('input[name="address"]:checked').value;
+                    const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+                    const totalAmount = document.getElementById("total1").innerHTML;
+                    const data = {
+                        address: addressId,
+                        payment: paymentMethod,
+                        amount: totalAmount
+                    };
+                    const response = await fetch('/placeOrder', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    if (response.ok) {
+                        const responseData = await response.json();
+                        // Assuming Swal is already loaded
+                        Swal.fire({
+                            title: 'Order Placed Successfully',
+                            imageUrl: '/static/img/Animation - 1698988378670.gif',
+                            imageAlt: 'Custom Image',
+                            html: `
+                                <p>Thank you for your purchase! Now we're preparing for the shipment!...</p>
+                                <a href="/orderDetails" class="btn btn-primary">Order Details</a>
+                                <a href="/products" class="btn btn-secondary">Continue Shopping</a> `,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            },
+                            width: '40%'
+                        });
+                    } else if (response.status === 201) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Insufficient Wallet Balance',
+                            text: 'Your wallet balance is insufficient. Please choose a different payment method or recharge your wallet.',
+                        });
+                    } else if (response.status === 202) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Stock Exceeded',
+                            text: 'Product stock is less than your order quantity',
+                        });
+                    } else {
+                        const responseData = await response.json();
+                        razorPayment(responseData.order);
+                    }
+                } catch (error) {
+                    console.error('There was an error:', error);
+                    Swal.fire('An error occurred while placing the order');
+                }
+            });
+        }
 
-	try {
-	  const addressId = document.querySelector('input[name="address"]:checked').value;
-	  const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
-	  // ======= for wallet balnce and amount comparing =======
-	  const totelAmount = document.getElementById("total1").innerHTML
+        placeOrder(); // Call the function to handle the order placement
 
-	  const data = {
-		address: addressId,
-		payment: paymentMethod,
-		amount: totelAmount,
-	  
-	  };
+        function razorPayment(order) {
+            var options = {
+                key: '<%=process.env.Razorpaykey_id%>',
+                amount: order.amount,
+                currency: "INR",
+                name: "SHOECART",
+                description: "Test Transaction",
+                image: "/user/images/icons/",
+                order_id: order.id,
+                handler: function (response) {
+                    verifyPayment(response, order);
+                },
+                prefill: {
+                    name: "M.Inshad",
+                    email: "aljamalu.ali@example.com",
+                    contact: "9000090000"
+                },
+                notes: {
+                    address: "Razorpay Corporate Office",
+                },
+                theme: {
+                    color: "#3399cc"
+                }
+            };
+            var rzp1 = new Razorpay(options);
+            rzp1.open();
+        }
 
-	  const response = await fetch('/placeOrder', {
-		method: 'POST',
-		headers: {
-		  'Content-Type': 'application/json',
-		},
-		body: JSON.stringify(data)
-	  });
-
-	  console.log(response);
-
-	  if (response.status === 200) {
-		const contentType = response.headers.get('content-type');
-		if (contentType && contentType.includes('application/json')) {
-		  const responseData = await response.json();
-		  Swal.fire({
-			title: 'Order Placed Successfully',
-			imageUrl: '/static/img/Animation - 1698988378670.gif',
-			imageAlt: 'Custom Image',
-			html: `
-			<p>Thank you for your purchase! Now we're preparing for the shipment!...</p>
-			<a href="/orderDetails" class="btn btn-primary">Order Details</a>
-			<a href="/products" class="btn btn-secondary">Continue Shopping</a> `,
-			didOpen: () => {
-			  Swal.showLoading();
-			},
-			width: '40%', // Adjust the width value as needed
-		  })
-
-		} else {
-		  throw new Error('Response was not in JSON format');
-		}
-
-	  } else if (response.status === 201) {
-		// Display SweetAlert for insufficient wallet balance
-		Swal.fire({
-		  icon: 'error',
-		  title: 'Insufficient Wallet Balance',
-		  text: 'Your wallet balance is insufficient. Please choose a different payment method or recharge your wallet.',
-		});
-	  } else if (response.status === 202) {
-		Swal.fire({
-		  icon: 'error',
-		  title: 'Stock exeed',
-		  text: 'product stock is less than your order quantity',
-		});
-	  }
-	  else {
-		const responseData = await response.json();
-		razorPayment(responseData.order);
-
-	  }
-	} catch (error) {
-	  console.error('There was an error:', error);
-	  Swal.fire('An error occurred while placing the order');
-	}
-  });
-}
-
-placeOrder();
+        function verifyPayment(payment, order) {
+            const amount2 = document.getElementById("total1").innerHTML;
+            fetch("/verifyPayment", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    payment,
+                    amount2,
+                    order
+                })
+            }).then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Network response was not ok');
+                }
+            }).then(responseData => {
+                if (responseData.razorpaySuccess) {
+                    Swal.fire({
+                        title: 'Order Placed Successfully',
+                        imageUrl: '/static/img/Animation - 1698988378670.gif',
+                        imageAlt: 'Custom Image',
+                        html: `
+                            <p>Thank you for your purchase! Now we're preparing for the shipment!...</p>
+                            <a href="/orderDetails" class="btn btn-primary">Order Details</a>
+                            <a href="/products" class="btn btn-secondary">Continue Shopping</a> `,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        },
+                        width: '40%',
+                    });
+                } else {
+                    Swal.fire({
+                        position: "center",
+                        icon: "error",
+                        title: "Payment failed",
+                        showConfirmButton: false,
+                        timer: 1500,
+                    });
+                }
+            }).catch(error => {
+                console.error('There was an error:', error);
+                Swal.fire('An error occurred while verifying the payment');
+            });
+        }
+    });
 </script>
-  
-<%-include('../users/layouts/footer.ejs') %>
+
+
+
+<%- include('../users/layouts/footer.ejs') %>

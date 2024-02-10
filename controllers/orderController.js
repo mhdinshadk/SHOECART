@@ -4,9 +4,18 @@ const Product = require("../models/product");
 const User = require("../models/users");
 const Address = require("../models/userAddress");
 const Order = require("../models/order");
+const Razorpay = require("razorpay");
+const crypto = require("crypto");
 
 
-// cart items total 
+// =========== razorpay instance =========== \\
+var instance = new Razorpay({
+	key_id: process.env.Razorpaykey_id,
+	key_secret: process.env.Razorpaykey_secret,
+  });
+
+
+// ---------- cart items total ----------------\\
 const calculateTotalPrice = async (userId) => {
 	try {
 	  const cart = await Cart.findOne({ user: userId }).populate(
@@ -138,127 +147,361 @@ const addShippingAddress = async (req, res, next) => {
 	}
   };
   //--------------- place order --------------------\\
-  const placeOrder = async (req,res,next) => {
-	try {
-		const userId  = req.session.user_id;
-		const addressId = req.body.address;
-		const paymentType = req.body.payment;
-		const totalAmount = parseInt(req.body.amount);
-		const cartDetails = await Cart.findOne({ user : userId});
+//   const placeOrder = async (req,res,next) => {
+// 	try {
+// 		const userId  = req.session.user_id;
+// 		const addressId = req.body.address;
+// 		const paymentType = req.body.payment;
+// 		const totalAmount = parseInt(req.body.amount);
+// 		const cartDetails = await Cart.findOne({ user : userId});
 
-		const userAddrs = await Address.findOne({userId:userId});
-		const shipAddress = userAddrs.address.find((address) => {
-			return address._id.toString() === addressId.toString();
-		});
+// 		const userAddrs = await Address.findOne({userId:userId});
+// 		const shipAddress = userAddrs.address.find((address) => {
+// 			return address._id.toString() === addressId.toString();
+// 		});
 
-		if(!shipAddress) {
-			return res.status(400).json({error : "Address not found"});
-		}
-		const user = await User.findById(req.session.user_id);
+// 		if(!shipAddress) {
+// 			return res.status(400).json({error : "Address not found"});
+// 		}
+// 		const user = await User.findById(req.session.user_id);
 
-		// checking product in stock 
-		 const productQuantity = await checkProductQuantities(userId);
-		 if(productQuantity === false) {
-			return res.status(202).send({});
-		 }
+// 		// checking product in stock 
+// 		 const productQuantity = await checkProductQuantities(userId);
+// 		 if(productQuantity === false) {
+// 			return res.status(202).send({});
+// 		 }
 
-		 let total = await calculateTotalPrice(userId);
-            // total = total - discountTotal;
+// 		 let total = await calculateTotalPrice(userId);
+//             // total = total - discountTotal;
 
-		const { fullName, mobile, state, district, city, pincode } = shipAddress;
+// 		const { fullName, mobile, state, district, city, pincode } = shipAddress;
 
-		const productIDs = cartDetails.products.map(
-			(productItem) => productItem.productId
-		);
+// 		const productIDs = cartDetails.products.map(
+// 			(productItem) => productItem.productId
+// 		);
 
-		const productPrices = []; // Array to store product prices
+// 		const productPrices = []; // Array to store product prices
 
-		const productData = await Cart.find({
-		  "products.productId": { $in: productIDs },
-		})
-		  .populate({
-			path: "products.productId",
-			select: "price discountedPrice",
-		  })
-		  .exec();
+// 		const productData = await Cart.find({
+// 		  "products.productId": { $in: productIDs },
+// 		})
+// 		  .populate({
+// 			path: "products.productId",
+// 			select: "price discountedPrice",
+// 		  })
+// 		  .exec();
 
-		  if (productData && productData.length > 0) {
-			productData.forEach((order) => {
-			  if (order.products && order.products.length > 0) {
-				order.products.forEach((product) => {
-				  const price =
-					product.productId.discountedPrice || product.productId.price;
-				  productPrices.push(price); // Store the price in the array
-				});
-			  } else {
-				console.log("Products array is empty in the order");
-			  }
-			});
-		  } else {
-			console.log("No matching orders found");
-		  }
-		   // Now update the cartProducts with prices
-		   const cartProducts = cartDetails.products.map((productItem, index) => ({
-			productId: productItem.productId,
-			quantity: productItem.quantity,
-			OrderStatus: "Pending",
-			StatusLevel: 1,
-			price: productPrices[index], // Use the corresponding price from the array
-			paymentStatus: "Pending",
-			"returnOrderStatus.status": "none",
-			"returnOrderStatus.reason": "none",
-		  }));
-		  const today = new Date();
-		  const deliveryDate = new Date(today);
-		  deliveryDate.setDate(today.getDate() + 7);
+// 		  if (productData && productData.length > 0) {
+// 			productData.forEach((order) => {
+// 			  if (order.products && order.products.length > 0) {
+// 				order.products.forEach((product) => {
+// 				  const price =
+// 					product.productId.discountedPrice || product.productId.price;
+// 				  productPrices.push(price); // Store the price in the array
+// 				});
+// 			  } else {
+// 				console.log("Products array is empty in the order");
+// 			  }
+// 			});
+// 		  } else {
+// 			console.log("No matching orders found");
+// 		  }
+// 		   // Now update the cartProducts with prices
+// 		   const cartProducts = cartDetails.products.map((productItem, index) => ({
+// 			productId: productItem.productId,
+// 			quantity: productItem.quantity,
+// 			OrderStatus: "Pending",
+// 			StatusLevel: 1,
+// 			price: productPrices[index], // Use the corresponding price from the array
+// 			paymentStatus: "Pending",
+// 			"returnOrderStatus.status": "none",
+// 			"returnOrderStatus.reason": "none",
+// 		  }));
+// 		  const today = new Date();
+// 		  const deliveryDate = new Date(today);
+// 		  deliveryDate.setDate(today.getDate() + 7);
 
 
-		  const trackId = await generateUniqueTrackId();
-		  const order = new Order({
-			userId: req.session.user_id,
-			"shippingAddress.fullName": fullName,
-			"shippingAddress.mobile": mobile,
-			"shippingAddress.state": state,
-			"shippingAddress.district": district,
-			"shippingAddress.city": city,
-			"shippingAddress.pincode": pincode,
-			products: cartProducts,
-			totalAmount: total,
-			paymentMethod: paymentType,
-			expectedDelivery: deliveryDate,
-			orderDate: new Date(),
-			trackId,
-			// coupon: appliedCoupon,
-		  });
+// 		  const trackId = await generateUniqueTrackId();
+// 		  const order = new Order({
+// 			userId: req.session.user_id,
+// 			"shippingAddress.fullName": fullName,
+// 			"shippingAddress.mobile": mobile,
+// 			"shippingAddress.state": state,
+// 			"shippingAddress.district": district,
+// 			"shippingAddress.city": city,
+// 			"shippingAddress.pincode": pincode,
+// 			products: cartProducts,
+// 			totalAmount: total,
+// 			paymentMethod: paymentType,
+// 			expectedDelivery: deliveryDate,
+// 			orderDate: new Date(),
+// 			trackId,
+// 			// coupon: appliedCoupon,
+// 		  });
 
-		  const placeorder = await order.save();
-		  const orderId = placeorder._id;
+// 		  const placeorder = await order.save();
+// 		  const orderId = placeorder._id;
 
 
 		  
-		  if (paymentType === "COD") {
-			for (const item of cartDetails.products) {
-			  const productId = item.productId._id;
-			  const quantity = parseInt(item.quantity, 10);
+// 		  if (paymentType === "COD") {
+// 			for (const item of cartDetails.products) {
+// 			  const productId = item.productId._id;
+// 			  const quantity = parseInt(item.quantity, 10);
 		
-				await Product.findByIdAndUpdate(
-				  { _id: productId },
-				  {
-					$inc: { quantity: -quantity },
-				  }
-				);
-			  }
+// 				await Product.findByIdAndUpdate(
+// 				  { _id: productId },
+// 				  {
+// 					$inc: { quantity: -quantity },
+// 				  }
+// 				);
+// 			  }
 		
-			  res
-				.status(200)
-				.json({ placeorder, message: "Order placed successfully" });
+// 			  res
+// 				.status(200)
+// 				.json({ placeorder, message: "Order placed successfully" });
 
-				await Cart.findOneAndDelete({ userid: req.body.user_id });
-			} 
+// 				await Cart.findOneAndDelete({ userid: req.body.user_id });
+// 			} 
+// 	} catch (error) {
+// 		next(error);
+// 	}
+//   };
+
+const placeOrder = async (req, res, next) => {
+	try {
+	  const userId = req.session.user_id;
+	  const addressId = req.body.address
+	  const paymentType = req.body.payment;
+	  const totalAmount = parseInt(req.body.amount);
+	  const cartDetails = await Cart.findOne({ user: userId });
+  
+	  const userAddrs = await Address.findOne({ userId: userId });
+	  const shipAddress = userAddrs.address.find((address) => {
+		return address._id.toString() === addressId.toString();
+	  });
+  
+	  if (!shipAddress) {
+		return res.status(400).json({ error: "Address not found" });
+	  }
+  
+	  const user = await User.findById(req.session.user_id);
+  
+	  // cheking the product stock
+	  const productQuantity = await checkProductQuantities(userId);
+	  if (productQuantity === false) {
+		return res.status(202).send({});
+	  }
+  
+
+	  let total = await calculateTotalPrice(userId);
+	  total = total;
+  
+	  // chekking the wallet balance
+	  if (paymentType === "Wallet" && user.wallet < totalAmount) {
+		return res.status(201).json({});
+	  }
+  
+	  const { fullName, mobile, state, district, city, pincode } = shipAddress;
+  
+	  const productIDs = cartDetails.products.map(
+		(productItem) => productItem.productId
+	  );
+  
+	  const productPrices = []; // Array to store product prices
+  
+	  const productData = await Cart.find({
+		"products.productId": { $in: productIDs },
+	  })
+		.populate({
+		  path: "products.productId",
+		  select: "price ",
+		})
+		.exec();
+  
+	  if (productData && productData.length > 0) {
+		productData.forEach((order) => {
+		  if (order.products && order.products.length > 0) {
+			order.products.forEach((product) => {
+			  const price =
+				product.productId.discountedPrice || product.productId.price;
+			  productPrices.push(price); // Store the price in the array
+			});
+		  } else {
+			console.log("Products array is empty in the order");
+		  }
+		});
+	  } else {
+		console.log("No matching orders found");
+	  }
+  
+	  // Now update the cartProducts with prices
+	  const cartProducts = cartDetails.products.map((productItem, index) => ({
+		productId: productItem.productId,
+		quantity: productItem.quantity,
+		OrderStatus: "Pending",
+		StatusLevel: 1,
+		price: productPrices[index], // Use the corresponding price from the array
+		paymentStatus: "Pending",
+		"returnOrderStatus.status": "none",
+		"returnOrderStatus.reason": "none",
+	  }));
+  
+	  const today = new Date();
+	  const deliveryDate = new Date(today);
+	  deliveryDate.setDate(today.getDate() + 7);
+  
+	  const trackId = await generateUniqueTrackId();
+	  const order = new Order({
+		userId: req.session.user_id,
+		"shippingAddress.fullName": fullName,
+		"shippingAddress.mobile": mobile,
+		"shippingAddress.state": state,
+		"shippingAddress.district": district,
+		"shippingAddress.city": city,
+		"shippingAddress.pincode": pincode,
+		products: cartProducts,
+		totalAmount: total,
+		paymentMethod: paymentType,
+		expectedDelivery: deliveryDate,
+		orderDate: new Date(),
+		trackId,
+	  });
+  
+	  const placeorder = await order.save();
+	  const orderId = placeorder._id;
+  
+	  if (paymentType === "COD" || paymentType === "Wallet") {
+		for (const item of cartDetails.products) {
+		  const productId = item.productId._id;
+		  const quantity = parseInt(item.quantity, 10);
+  
+		  if (paymentType === "Wallet") {
+			let changeOrderStatus = await Order.updateOne(
+			  { _id: placeorder._id },
+			  {
+				$set: {
+				  "products.$[].paymentStatus": "Success",
+				  "products.$[].OrderStatus": "Placed",
+				},
+			  }
+			);
+			const walletHistory = {
+			  transactionDate: new Date(),
+			  transactionDetails: "Product Purchased",
+			  transactionType: "Debit",
+			  transactionAmount: totalAmount,
+			  orderId: trackId,
+			  currentBalance: !isNaN(userId.wallet)
+				? userId.wallet + amount
+				: totalAmount,
+			};
+			await User.findByIdAndUpdate(
+			  { _id: userId },
+			  {
+				$inc: {
+				  wallet: -totalAmount,
+				},
+				$push: {
+				  walletHistory,
+				},
+			  }
+			);
+		  } else {
+			let changeOrderStatus = await Order.updateOne(
+			  { _id: placeorder._id },
+			  {
+				$set: {
+				  "products.$[].OrderStatus": "Placed",
+				},
+			  }
+			);
+		  }
+  
+		  await Product.findByIdAndUpdate(
+			{ _id: productId },
+			{
+			  $inc: { quantity: -quantity },
+			}
+		  );
+		}
+  
+		res
+		  .status(200)
+		  .json({ placeorder, message: "Order placed successfully" });
+  
+		await Cart.findOneAndDelete({ userid: req.body.user_id });
+	  } else if (paymentType === "Online Payment") {
+		var options = {
+		  amount: total * 100,
+		  currency: "INR",
+		  receipt: "" + orderId,
+		};
+		instance.orders.create(options, function (err, order) {
+		  if (err) {
+			console.error(err); // Handle any errors that occurred during the API call
+		  } else {
+			res.status(400).json({ order });
+		  }
+		});
+	  }
 	} catch (error) {
-		next(error);
+	  next(error);
 	}
   };
+
+  // -------- verify payment -----------------\\
+  const verifyPayment = async (req, res, next) => {
+	try {
+	  const cartData = await Cart.findOne({ user: req.session.user_id });
+	  const products = cartData.products;
+	  const details = req.body;
+	  const hmac = crypto.createHmac("sha256", instance.key_secret);
+  
+	  hmac.update(
+		details.payment.razorpay_order_id +
+		  "|" +
+		  details.payment.razorpay_payment_id
+	  );
+	  const hmacValue = hmac.digest("hex");
+  
+	  if (hmacValue === details.payment.razorpay_signature) {
+		for (let i = 0; i < products.length; i++) {
+		  const productId = products[i].productId;
+		  const quantity = products[i].quantity;
+		  await Product.findByIdAndUpdate(
+			{ _id: productId },
+			{ $inc: { quantity: -quantity } }
+		  );
+		}
+		await Order.findByIdAndUpdate(
+		  { _id: details.order.receipt },
+		  {
+			$set: {
+			  "products.$[].paymentStatus": "Success",
+			  "products.$[].OrderStatus": "Placed",
+			},
+		  }
+		);
+  
+		await Order.findByIdAndUpdate(
+		  { _id: details.order.receipt },
+		  { $set: { paymentId: details.payment.razorpay_payment_id } }
+		);
+		await Cart.deleteOne({ user: req.session.user_id });
+		const orderid = details.order.receipt;
+  
+		res.json({ razorpaySuccess: true, orderid });
+	  } else {
+		await Order.findByIdAndRemove({ _id: details.order.receipt });
+		res.json({ success: false });
+	  }
+	} catch (error) {
+	  next(error);
+	}
+  };
+  
 
   
 // ========= Function to Checkout product Stock Check =========
@@ -424,12 +667,75 @@ const loadOrderPage = async (req, res, next) => {
   };
   
   // ----------- user side cancell order ----------------- \\
+//   const cancelOrder = async (req, res, next) => {
+// 	try {
+// 	  const orderId = req.body.orderId;
+// 	  const productId = req.body.productId;
+  
+// 	  const order = await Order.findById(orderId);
+  
+// 	  if (!order) {
+// 		return res.status(404).json({ message: "Order not found." });
+// 	  }
+  
+// 	  const productInfo = order.products.find(
+// 		(product) => product.productId.toString() === productId
+// 	  );
+  
+// 	  // const productDetails = await Product.findById(productInfo.productId);
+// 	  let totalAmount = productInfo.quantity * productInfo.price;
+  
+// 	  let cartTotal = order.totalAmount;
+  
+// 	  if (order) {
+// 		let totalWithoutCoupon = order + cartTotal;
+  
+// 		if (Math.abs(totalAmount)) {
+// 		  totalWithoutCoupon = await order.products.reduce(
+// 			async (totalPromise, product) => {
+// 			  const total = await totalPromise;
+// 			  if (
+// 				product.productId._id.toString() !== productId &&
+// 				product.OrderStatus !== "Cancelled"
+// 			  ) {
+// 				const productDetailsWithoutCancelled = await Product.findById(
+// 				  product.productId
+// 				);
+// 				return (
+// 				  total + productDetailsWithoutCancelled.price * product.quantity
+// 				);
+// 			  }
+// 			  return total;
+// 			},
+// 			Promise.resolve(0)
+// 		  );
+  
+// 		  totalAmount = cartTotal - totalWithoutCoupon;
+// 		}
+// 	  }
+  
+// 	  productInfo.OrderStatus = "Cancelled";
+// 	  productInfo.updatedAt = Date.now();
+  
+// 	  await Promise.all([
+// 		order.save(),
+// 		Product.findByIdAndUpdate(
+// 		  { _id: productId },
+// 		  { $inc: { quantity: productInfo.quantity } }
+// 		),
+// 	  ]);
+  
+// 	  res.json({ cancel: 1 });
+// 	} catch (error) {
+// 	  next(error);
+// 	}
+//   };
   const cancelOrder = async (req, res, next) => {
 	try {
 	  const orderId = req.body.orderId;
 	  const productId = req.body.productId;
-  
 	  const order = await Order.findById(orderId);
+	  const userId = req.session.user_id;
   
 	  if (!order) {
 		return res.status(404).json({ message: "Order not found." });
@@ -481,6 +787,31 @@ const loadOrderPage = async (req, res, next) => {
 		  { $inc: { quantity: productInfo.quantity } }
 		),
 	  ]);
+  
+	  // ========== adding money to wallet =========
+	  if (productInfo.paymentStatus === "Success") {
+		const walletHistory = {
+		  transactionDate: new Date(),
+		  transactionDetails: "Refund",
+		  transactionType: "Credit",
+		  transactionAmount: totalAmount,
+		  orderId: order.trackId,
+		  currentBalance: !isNaN(userId.wallet)
+			? userId.wallet + totalAmount
+			: totalAmount,
+		};
+  
+		await User.findByIdAndUpdate(
+		  { _id: userId },
+		  {
+			$inc: { wallet: totalAmount },
+			$push: { walletHistory },
+		  }
+		);
+  
+		productInfo.paymentStatus = "Refund";
+		await order.save();
+	  }
   
 	  res.json({ cancel: 1 });
 	} catch (error) {
@@ -561,8 +892,38 @@ const changeOrderStatus = async (req, res, next) => {
 			$inc: { quantity: productInfo.quantity },
 		  }
 		);
-  
+		 // ========== adding money to wallet =========
+		 if (productInfo.paymentStatus === "Success") {
+			const walletHistory = {
+			  transactionDate: new Date(),
+			  transactionDetails: "Refund",
+			  transactionType: "Credit",
+			  transactionAmount: totalAmount,
+			  orderId: order.trackId,
+			  currentBalance: !isNaN(userId.wallet)
+				? userId.wallet + amount
+				: totalAmount,
+			};
+			await User.findByIdAndUpdate(
+			  { _id: userId },
+			  {
+				$inc: {
+				  wallet: totalAmount,
+				},
+				$push: {
+				  walletHistory,
+				},
+			  }
+			);
+		  }
+	
+		  if (productInfo.paymentStatus === "Success") {
+			productInfo.paymentStatus = "Refund";
+			const result = await order.save();
+		  }
+
 		return res.json({ cancel: 1, message: "Order successfully cancelled" });
+
 	  } else {
 		return res
 		  .status(404)
@@ -577,6 +938,7 @@ const changeOrderStatus = async (req, res, next) => {
 		addShippingAddress,
 		placeOrder,
 		loadOrderPage,
+		verifyPayment,
 		loadOrderDetailes,
 		loadAdminOrder,
 		orderMangeLoad,
