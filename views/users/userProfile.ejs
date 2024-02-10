@@ -47,6 +47,22 @@
         border-radius:20px;
         width:162%;
     }
+    .tab-content{
+        background-color:rgb(220 225 224);
+        width:60%;
+        height: 98%;
+        border-color:black;
+        border-radius:20px;
+    }
+    .tab-pane{
+       width: 62%;
+       margin-left: 175px;
+      
+    }
+    .btn2{
+        background-color:rgba(52, 58, 56, 0.486);
+        border-radius:30px;
+    }
 </style>
 
 <main class="main">
@@ -59,7 +75,7 @@
         <div class="container">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item"><a href="">My Profile</a></li>
+                <li class="breadcrumb-item"style=" font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"><a href="">My Profile</a></li>
             </ol>
         </div>
     </nav>
@@ -136,7 +152,7 @@
                     </div>
                     <!-- End .col-lg-3 -->
 
-                    <div class="col-md-8 col-lg-9 pt-3">
+                    <div class="col-md-8 col-lg-9 pt-3 " style="margin-left:125px;">
                         <div class="tab-content">
                             <div
                                 class="tab-pane fade show active"
@@ -157,7 +173,7 @@
                                                 disabled
                                             />
                                         </div>
-                                        <div class="col-sm-6">
+                                        <div class="col-sm-6"id>
                                             <label>Last Name</label>
                                             <input type="text" class="form-control" value="<%=user.lastName %>" disabled />
                                         </div>
@@ -248,7 +264,7 @@
                                                 type="text"
                                                 class="form-control"
                                                 name="Fname"
-                                                id="Fname"
+                                                id="Fname" 
                                                 value="<%=user.first_name %>"
                                             />
                                             <span id="Fname-error" class="text-danger"></span>
@@ -295,8 +311,8 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-6">
-                                    <button type="submit" class="btn btn-outline-primary-2">
-                                        <span>Save Changes</span>
+                                    <button type="submit" class="btn2">
+                                        <span class="spn" style="color:#f3f3f9">Save Changes</span>
                                     </button>
                                 </div>
                             </div>
@@ -323,8 +339,8 @@
                                         <!-- End .row -->
                                         <div class="row">
                                             <div class="col-sm-6">
-                                        <button type="submit" class="btn btn-outline-primary-2">
-                                            <span>Save Changes</span>
+                                        <button type="submit" class="btn2">
+                                            <span class="spn" style="color:#f3f3f9">Save Changes</span>
                                         </button>
                                             </div>
                                         </div>
@@ -411,6 +427,71 @@
                 console.error("Error during address removal:", error);
             }
         });
+    }
+</script>
+<script>
+    function validEditAddress() {
+        // Validation logic for edit profile form
+        let isValid = true;
+
+        // Validate First Name
+        const firstName = document.getElementById('Fname').value.trim();
+        const firstNameError = document.getElementById('Fname-error');
+        if (!firstName) {
+            isValid = false;
+            firstNameError.textContent = 'First Name is required';
+        } else {
+            firstNameError.textContent = '';
+        }
+
+        // Validate Last Name
+        const lastName = document.getElementById('Lname').value.trim();
+        const lastNameError = document.getElementById('Lname-error');
+        if (!lastName) {
+            isValid = false;
+            lastNameError.textContent = 'Last Name is required';
+        } else {
+            lastNameError.textContent = '';
+        }
+
+        // Validate Mobile Number
+        const mobile = document.getElementById('mobile').value.trim();
+        const mobileError = document.getElementById('mobile-error');
+        if (!mobile) {
+            isValid = false;
+            mobileError.textContent = 'Mobile Number is required';
+        } else {
+            mobileError.textContent = '';
+        }
+
+        return isValid;
+    }
+
+    function validatePasswords() {
+        // Validation logic for password change form
+        let isValid = true;
+
+        // Validate Current Password
+        const currentPassword = document.getElementsByName('oldPassword')[0].value.trim();
+        const currentPasswordError = document.getElementById('current-password-error');
+        if (!currentPassword) {
+            isValid = false;
+            currentPasswordError.textContent = 'Current Password is required';
+        } else {
+            currentPasswordError.textContent = '';
+        }
+
+        // Validate New Password
+        const newPassword = document.getElementsByName('newPassword')[0].value.trim();
+        const newPasswordError = document.getElementById('new-password-error');
+        if (!newPassword) {
+            isValid = false;
+            newPasswordError.textContent = 'New Password is required';
+        } else {
+            newPasswordError.textContent = '';
+        }
+
+        return isValid;
     }
 </script>
 

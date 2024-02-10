@@ -7,6 +7,7 @@ const cartController = require("../controllers/cartController");
 const profileController = require("../controllers/profileController");
 const userAuth = require("../middileware/userAuth");
 const orderController = require("../controllers/orderController"); 
+const walletController = require("../controllers/walletController");
 const {env} = require('process');
 
 
@@ -74,6 +75,11 @@ user_route.post('/placeOrder',userAuth.isLogin,orderController.placeOrder);
 user_route.get('/viewOrder',userAuth.isLogin,orderController.loadOrderPage);
 user_route.get('/orderDetails',userAuth.isLogin,orderController.loadOrderDetailes);
 user_route.post('/cancelOrder',userAuth.isLogin,orderController.cancelOrder);
+user_route.post('/verifyPayment',userAuth.isLogin,orderController.verifyPayment);
 
+// ========= wallet routes ==========
+user_route.get('/wallet',userAuth.isLogin,walletController.loadWallet);
+user_route.post('/addMoneyToWallet',userAuth.isLogin,walletController.addMoneyToWallet);
+user_route.post('/verifyWalletpayment',userAuth.isLogin,walletController.verifyWalletPayment);
 
 module.exports = user_route;

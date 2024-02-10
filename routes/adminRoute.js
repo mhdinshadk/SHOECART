@@ -4,6 +4,8 @@ const path = require('path');
 const session = require('express-session');
 const config = require('../config/confiq');
 const auth = require('../middileware/adminAuth');
+const offerController = require("../controllers/offerController"); 
+const salesController = require("../controllers/reportController"); 
 const fileUploadMiddleware = require('../middileware/fileUpload');
 const adminController  = require('../controllers/adminController');
 const orderController = require("../controllers/orderController");
@@ -57,11 +59,21 @@ admin_route.get('/editProduct',auth.isLogin,adminController.loadEditProduct);
 admin_route.post('/editProduct',fileUploadMiddleware.upload.array('images'),adminController.editProduct);
 admin_route.get('/unlistProduct',auth.isLogin,adminController.unlistProduct);
 
-//------------- order managment route ------------------\\
+// -------------- sales report routes -----------------\\
+admin_route.get('/salesReport',auth.isLogin,salesController.salesReportPageLoad )
 
+//------------- order managment route ------------------\\
 admin_route.get('/order',auth.isLogin,orderController.loadAdminOrder);
 admin_route.get('/order/orderManagment',auth.isLogin,orderController. orderMangeLoad );
-admin_route.post('/order/orderManagment/changeStatus',auth.isLogin,orderController. changeOrderStatus )
+admin_route.post('/order/orderManagment/changeStatus',auth.isLogin,orderController. changeOrderStatus );
 admin_route.post('/adminCancelOrder', auth.isLogin, orderController.adminCancelOrder);
+
+//----------- offer routes ---------------------\\
+admin_route.get('/addOffer',auth.isLogin,offerController.loadAddOffer);
+admin_route.post('/addOffer',auth.isLogin,offerController.addOffer);
+admin_route.get('/offer',auth.isLogin,offerController.loadOffers);
+admin_route.get('/editOffer/:id',auth.isLogin,offerController.loadEditOffer)
+admin_route.post('/editOffer',auth.isLogin,offerController.editOffer)
+admin_route.patch('/cancelOffer',auth.isLogin,offerController.cancelOffer)
 
 module.exports = admin_route;
