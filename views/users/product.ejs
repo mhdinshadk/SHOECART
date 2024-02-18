@@ -411,7 +411,7 @@
 
         <div class="untree_co-section product-section before-footer-section">
 		    <div class="container-product">
-		      	<div class="row">
+                <div class="row">
                     <div class="filter-container col-lg-3">
                         <div class="left_sidebar_area">
                             <aside class="left_widgets p_filter_widgets">
@@ -535,78 +535,46 @@
 		      		<!-- Start Column 1 -->
                       <% if (product) { %>
                         <% for (let i = 0; i < product.length; i++) { %>
-					<div class="col-12 col-md-4 col-lg-3 mb-5">
-						<a class="product-item" href="/productDetails/<%= product[i]._id%>">
-							<img src="/static/adminAssets/images/products/<%=product[i].images[0]%>" alt="<%=product[i].images[0]%>" class="img-fluid product-thumbnail">
-							<h3 class="product-title"><%= product[i].productName %></h3>
-							<strong class="product-price">₹<%= product[i].price %></strong>
-
-							<span class="icon-cross">
-								<!-- <img src="/static/userAssets/img/cross.svg" class="img-fluid"> -->
-                                <i class="fa-solid fa-plus fa-rotate-90 fa-2xl" style="color: #ffffff;margin-top: 45%;"></i>
-							</span>
-						</a>
-					</div> 
-                    <% } %>
+                            <div class="col-12 col-md-4 col-lg-3 mb-5">
+                                <% if(product[i].offer ) { %>
+                                    <div class="discount-badge"style="background-color: #ff5733; color: #f8f8f8; padding: 5px; position: absolute; z-index: 1; width: 74px;">
+                                        <span class="stext-103 size-102">
+                                            <%= product[i].offer.discount %> % OFF
+                                        </span>
+                                    </div>
+                                <% } %>
+                                <a class="product-item" href="/productDetails/<%= product[i]._id %>">
+                                    <img src="/static/adminAssets/images/products/<%= product[i].images[0] %>" alt="<%= product[i].images[0] %>" class="img-fluid product-thumbnail">
+                                    <h3 class="product-title"><%= product[i].productName %></h3>
+                                    <% if(product[i].offer && product[i].offer.discount > 0) { %>
+                                        <div class="d-flex">
+                                            <span class="stext-105 cl3">
+                                                <del>₹ <%= product[i].price %></del>
+                                            </span>
+                                            <span class="stext-105 cl3" style="margin-left: 130px;">
+                                                <p class="text-danger">₹ <%= product[i].discountedPrice %></p>
+                                            </span>
+                                        </div>
+                                    <% } else { %>
+                                        <span class="stext-105 cl3">₹ <%= product[i].price %></span>
+                                    <% } %>
+                                    <span class="icon-cross">
+                                        <!-- <img src="/static/userAssets/img/cross.svg" class="img-fluid"> -->
+                                        <i class="fa-solid fa-plus fa-rotate-90 fa-2xl" style="color: #ffffff;margin-top: 45%;"></i>
+                                    </span>
+                                </a>
+                            </div> 
+                        <% } %>
                     <% } else { %>
-                      <p>No products found.</p>
+                        <p>No products found.</p>
                     <% } %>
+                    
+                    
 					<!-- End Column 1 -->
                 
 		      	</div>
                   <div class="col-lg-12">
                     <div class="pageination">
-                         <!-- <nav aria-label="Page navigation example">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item">
-                                    <a class="page-link" href="#" aria-label="Previous">
-                                        <i class="ti-angle-double-left"></i>
-                                    </a>
-                                </li>
-                                <% for (let i=1; i <=pages; i++) { %>
-                                <li class="page-item" <%= currentPage === 1 ? 'disabled' : '' %>">
-                                    <a class="page-link" href="/products?page=<%= currentPage - 1 %>">
-                                        <%= i %>
-                                    </a>
-                                </li>
-                                <% } %> 
-                                 <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                <li class="page-item"><a class="page-link" href="#">4</a></li>
-                                <li class="page-item"><a class="page-link" href="#">5</a></li>
-                                <li class="page-item"><a class="page-link" href="#">6</a></li>
-                               
-                                     <li class="page-item" <%= currentPage === pages ? 'disabled' : '' %>">
-                                        <a class="page-link" href="/products?page=<%= currentPage + 1 %>" aria-label="Next">
-                                            <i class="ti-angle-double-right"></i>
-                                        </a>
-                                    </li>
-                                </li>
-                            </ul>
-                        </nav>  -->
-                        <!-- <nav aria-label="Page navigation example">
-                            <ul class="pagination justify-content-center">
-                              <li class="page-item">
-                                <a class="page-link" href="#" aria-label="Previous">
-                                  <span aria-hidden="true">&laquo;</span>
-                                  <span class="sr-only">Previous</span>
-                                </a>
-                              </li>
-                              <% for (let i=1; i <=pages; i++) { %>
-                              <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
-                                <a class="page-link" href="/products?page=<%= currentPage - 1 %>">  <%= i %></a>
-                            </li>
-                            <% } %>  -->
-                              <!-- <li class="page-item"><a class="page-link" href="#">2</a></li>
-                              <li class="page-item"><a class="page-link" href="#">3</a></li> -->
-                              <!-- <li class="page-item <%= currentPage === pages ? 'disabled' : '' %>">
-                                <a class="page-link"  href="/products?page=<%= currentPage + 1 %>" aria-label="Next">
-                                  <span aria-hidden="true">&raquo;</span>
-                                  <span class="sr-only">Next</span>
-                                </a>
-                              </li>
-                            </ul>
-                          </nav> -->
                           <nav aria-label="Page navigation example" class="my-3">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">

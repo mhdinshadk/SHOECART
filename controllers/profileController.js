@@ -109,40 +109,23 @@ const editAddress = async (req, res, next) => {
 };
 
 // ============ deleting user address =========
-// const deleteAddress = async (req, res, next) => {
-//     try {
-//         let userAddress = await Address.findOne({ userId: req.session.user_id });
-//         const addressToDeleteIndex = userAddress.address.findIndex((address) => address.id === req.body.id);
-//         if (addressToDeleteIndex === -1) {
-//             return res.status(404).json({ remove: 0 });
-//         }
-//         userAddress.address.splice(addressToDeleteIndex, 1);
-//         await userAddress.save();
-//         return res.json({ remove: 1 });
-//     } catch (error) {
-//         next(error);
-//     }
-// };
 const deleteAddress = async (req, res, next) => {
     try {
-        console.log("Received request to delete address with ID:", req.params.id);
-        
         let userAddress = await Address.findOne({ userId: req.session.user_id });
-        const addressToDeleteIndex = userAddress.address.findIndex((address) => address.id === req.params.id);
-        
+        const addressToDeleteIndex = userAddress.address.findIndex((address) => address.id === req.body.id);
         if (addressToDeleteIndex === -1) {
             return res.status(404).json({ remove: 0 });
         }
-
         userAddress.address.splice(addressToDeleteIndex, 1);
         await userAddress.save();
-
         return res.json({ remove: 1 });
     } catch (error) {
-        console.error("Error in deleteAddress:", error);
         next(error);
     }
 };
+
+
+
 
 
 // ======== updating user detailesl =========

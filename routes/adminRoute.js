@@ -4,8 +4,9 @@ const path = require('path');
 const session = require('express-session');
 const config = require('../config/confiq');
 const auth = require('../middileware/adminAuth');
+const couponController = require("../controllers/couponController");
 const offerController = require("../controllers/offerController"); 
-const salesController = require("../controllers/reportController"); 
+const salesController = require("../controllers/reportController");  
 const fileUploadMiddleware = require('../middileware/fileUpload');
 const adminController  = require('../controllers/adminController');
 const orderController = require("../controllers/orderController");
@@ -60,7 +61,10 @@ admin_route.post('/editProduct',fileUploadMiddleware.upload.array('images'),admi
 admin_route.get('/unlistProduct',auth.isLogin,adminController.unlistProduct);
 
 // -------------- sales report routes -----------------\\
+admin_route.post('/report/genarate',auth.isLogin,adminController.genarateSalesReports)
 admin_route.get('/salesReport',auth.isLogin,salesController.salesReportPageLoad )
+admin_route.post('/sales-report/portfolio',auth.isLogin,salesController.portfolioFiltering )
+admin_route.get('/sales-report/export-report',auth.isLogin,salesController.generateExcelReportsOfAllOrders)
 
 //------------- order managment route ------------------\\
 admin_route.get('/order',auth.isLogin,orderController.loadAdminOrder);
@@ -68,12 +72,25 @@ admin_route.get('/order/orderManagment',auth.isLogin,orderController. orderMange
 admin_route.post('/order/orderManagment/changeStatus',auth.isLogin,orderController. changeOrderStatus );
 admin_route.post('/adminCancelOrder', auth.isLogin, orderController.adminCancelOrder);
 
+
+// ================ coupon related routes ================
+admin_route.get('/addCoupon',auth.isLogin,couponController.loadaddCoupon)
+admin_route.post('/addCoupon',auth.isLogin,couponController.addCoupon)
+admin_route.get('/coupon',auth.isLogin,couponController.loadCoupon)
+admin_route.get('/editCoupon',auth.isLogin,couponController.loadEditCoupon)
+admin_route.post('/editCoupon',auth.isLogin,couponController.editCoupon)
+admin_route.delete('/deleteCoupon',auth.isLogin,couponController.deleteCoupon)
+
 //----------- offer routes ---------------------\\
 admin_route.get('/addOffer',auth.isLogin,offerController.loadAddOffer);
 admin_route.post('/addOffer',auth.isLogin,offerController.addOffer);
 admin_route.get('/offer',auth.isLogin,offerController.loadOffers);
-admin_route.get('/editOffer/:id',auth.isLogin,offerController.loadEditOffer)
-admin_route.post('/editOffer',auth.isLogin,offerController.editOffer)
-admin_route.patch('/cancelOffer',auth.isLogin,offerController.cancelOffer)
+admin_route.get('/editOffer/:id',auth.isLogin,offerController.loadEditOffer);
+admin_route.post('/editOffer',auth.isLogin,offerController.editOffer);
+admin_route.patch('/cancelOffer',auth.isLogin,offerController.cancelOffer);
+admin_route.patch('/applyOfferCategory',auth.isLogin,offerController.applyCategoryOffer)
+admin_route.patch('/removeOfferCategory',auth.isLogin,offerController.removeCategoryOffer)
+admin_route.patch('/applyProductOffer',auth.isLogin,offerController.applyProductOffer)
+admin_route.patch('/removeProductOffer',auth.isLogin,offerController.removeProductOffer)
 
 module.exports = admin_route;

@@ -223,8 +223,224 @@ const createSalesReport = async (startDate, endDate) => {
 	}
   };
 
+
+  //--------------- portfolio Data chart filtering --------------------\\
+  const portfolioFiltering = async (req,res,next) => {
+	 try {
+		let datePriad = req.body.date;
+
+		if(datePriad == "week") {
+			let data = await generateWeeklySalesCount();
+			res.json({data});
+		} else if (datePriad == "month") {
+			let data = await generateMonthlySalesCount();
+			data = data.reverse();
+		} else if ( datePriad == "year") {
+			let data = await generateYearlySalesCount();
+			res.json({data})
+		}
+	 } catch (error) {
+		next(error);
+	 }
+  };
+
+  // ------------ generate weekly sales report ---------------\\
+  const generateWeeklySalesCount = async () => {
+	try {
+	  const weeklySalesCounts = [];
+  
+	  const today = new Date();
+	  
+  
+	  for (let i = 0; i < 7; i++) {
+		const startDate = new Date(today);
+		startDate.setDate(today.getDate() - i);
+		const endDate = new Date(startDate);
+		endDate.setDate(startDate.getDate() + 1);
+  
+		const orders = await OrderDB.find({
+		  orderDate: {
+			$gte: startDate,
+			$lt: endDate,
+		  },
+		});
+  
+		const salesCount = orders.length;
+  
+		weeklySalesCounts.push({
+		  date: startDate.toISOString().split("T")[0],
+		  sales: salesCount,
+		});
+	  }
+  
+	  return weeklySalesCounts;
+	} catch (error) {
+	  console.error("Error generating the weekly sales counts:", error.message);
+	}
+  };
+
+  //----------- generating montly sales report-------------\\
+  const generateMonthlySalesCount = async () => {
+	try {
+	  const monthlySalesCounts = [];
+  
+	  const today = new Date();
+	  today.setHours(today.getHours() - 5);
+  
+	  // Calculate the earliest and latest months
+	  const latestMonth = new Date(today);
+	  const earliestMonth = new Date(today);
+	  earliestMonth.setMonth(earliestMonth.getMonth() - 7); // 7 months ago
+  
+	  // Create a map to store sales data for each month
+	  const salesData = new Map();
+  
+	  // Iterate through the complete date range
+	  while (earliestMonth <= latestMonth) {
+		const monthString = earliestMonth.toLocaleString("default", {
+		  month: "long",
+		});
+		salesData.set(monthString, 0);
+		earliestMonth.setMonth(earliestMonth.getMonth() + 1);
+	  }
+  
+	  // Populate sales data for existing months
+	  for (let i = 0; i < 7; i++) {
+		const startDate = new Date(today);
+		startDate.setMonth(today.getMonth() - i);
+		startDate.setDate(1);
+		const endDate = new Date(startDate);
+		endDate.setMonth(startDate.getMonth() + 1);
+		endDate.setDate(endDate.getDate() - 1);
+  
+		const orders = await OrderDB.find({
+		  orderDate: {
+			$gte: startDate,
+			$lt: endDate,
+		  },
+		});
+  
+		const salesCount = orders.length;
+		const monthString = startDate.toLocaleString("default", {
+		  month: "long",
+		});
+  
+		salesData.set(monthString, salesCount);
+	  }
+  
+	  // Convert the map to an array for the final result
+	  for (const [date, sales] of salesData) {
+		monthlySalesCounts.push({ date, sales });
+	  }
+  
+	  return monthlySalesCounts;
+	} catch (error) {
+	  console.error("Error generating the monthly sales counts:", error.message);
+	}
+  }; 
+
+  // ---------------- generating monthly sales count ------------------\\
+  const generateYearlySalesCount = async () => {
+	try {
+	  const yearlySalesCounts = [];
+  
+	  const today = new Date();
+	  today.setHours(today.getHours() - 5);
+  
+	  for (let i = 0; i < 7; i++) {
+		const startDate = new Date(today);
+		startDate.setFullYear(today.getFullYear() - i);
+		startDate.setMonth(0); // Set the start month to January
+		startDate.setDate(1); // Set the start day to the first day of the year
+		const endDate = new Date(startDate);
+		endDate.setFullYear(startDate.getFullYear() + 1);
+  
+		const orders = await OrderDB.find({
+		  orderDate: {
+			$gte: startDate,
+			$lt: endDate,
+		  },
+		});
+  
+		const salesCount = orders.length;
+  
+		yearlySalesCounts.push({
+		  date: startDate.getFullYear(),
+		  sales: salesCount,
+		});
+	  }
+  
+	  return yearlySalesCounts;
+	} catch (error) {
+	  console.error("Error generating the yearly sales counts:", error.message);
+	}
+  };
+
+  // ======== genarating sales excel report of all orders ========
+const generateExcelReportsOfAllOrders = async (req, res, next) => {
+	try {
+	  const { end, start } = req.query;
+  
+	  // Create a sales report or fetch it from your data source
+	  const sales = await getorders(start, end);
+  
+	  // Create a new Excel workbook and worksheet
+	  const workbook = new ExcelJS.Workbook();
+	  const worksheet = workbook.addWorksheet("Sales Report");
+  
+	  // Define the columns for the worksheet
+	  worksheet.columns = [
+		{ header: "Product Name", key: "productName", width: 25 },
+		{ header: "Order Id", key: "OrderId", width: 15 },
+		{ header: "User", key: "User", width: 25 },
+		{ header: "Order Date", key: "OrderDate", width: 15 },
+		{ header: "Quantity", key: "Quantity", width: 15 },
+		{ header: "Price", key: "Price", width: 15 },
+		{ header: "Pyament Status", key: "PyamentStatus", width: 15 },
+		{ header: "Order Status", key: "OrderStatus", width: 15 },
+	  ];
+  
+	  // Add data to the worksheet
+	  sales.forEach((orders) => {
+		worksheet.addRow({
+		  productName: orders.product.productName,
+		  OrderId: orders.orderDetails.trackId,
+		  User: orders.user.email,
+		  OrderDate: orders.orderDetails.orderDate
+			.toLocaleDateString("en-US", {
+			  year: "numeric",
+			  month: "short",
+			  day: "2-digit",
+			})
+			.replace(/\//g, "-"),
+		  Quantity: orders.orderDetails.quantity,
+		  Price: orders.orderDetails.totalAmount,
+		  PyamentStatus: orders.orderDetails.paymentStatus,
+		  OrderStatus: orders.orderDetails.OrderStatus,
+		});
+	  });
+  
+	  res.setHeader(
+		"Content-Type",
+		"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+	  );
+	  res.setHeader(
+		"Content-Disposition",
+		"attachment; filename=sales_report.xlsx"
+	  );
+  
+	  workbook.xlsx.write(res).then(() => {
+		res.end();
+	  });
+	} catch (error) {
+	  next(error);
+	}
+  };
+  
   
 
 module.exports = {
-	salesReportPageLoad,	
+	salesReportPageLoad,
+	portfolioFiltering,
+	generateExcelReportsOfAllOrders,
 }

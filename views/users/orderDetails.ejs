@@ -63,7 +63,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="col-md-9 mx-auto">
+                  <!-- <div class="col-md-9 mx-auto">
                     <h3 class="text-center py-4">Order Status</h3>
                     <% if (order.products[i].OrderStatus !== "Cancelled") { %>
                         <div class="progress-track">
@@ -82,7 +82,25 @@
                             </ul>
                         </div>
                     <% } %>
-                </div>
+                </div> -->
+                <div class="col-md-9 mx-auto">
+                  <h3 class="text-center py-4">Order Status</h3>
+                  <% if (order.products[i].OrderStatus !== "Cancelled") { %>
+                      <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: <%= (order.products[i].StatusLevel - 1) * 33.33 %>%;" aria-valuenow="<%= (order.products[i].StatusLevel - 1) * 33.33 %>" aria-valuemin="0" aria-valuemax="100"></div>
+                              <% if (order.products[i].StatusLevel === 1) { %>Order placed<% } %>
+                              <% if (order.products[i].StatusLevel === 2) { %>Shipped<% } %>
+                              <% if (order.products[i].StatusLevel === 3) { %>Out for Delivery<% } %>
+                              <% if (order.products[i].StatusLevel >= 4) { %>Delivered<% } %>
+                          </div>
+                      </div>
+                  <% } else { %>
+                      <div class="progress">
+                          <div class="progress-bar bg-danger" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100">Cancelled</div>
+                      </div>
+                  <% } %>
+              </div>
+              
                 
                 
                 
