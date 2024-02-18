@@ -9,6 +9,7 @@ const {ObjectId} = require("mongodb");
 const { log } = require("console");
 const category = require("../models/category");
 const mongoose = require('mongoose');
+const Offer = require("../models/offer");
 
 
 //---------- password security ------------\\
@@ -351,7 +352,7 @@ const loadProducts = async (req, res, next) => {
 	  let defaultSortKey = req.query.sortValue !== "3" ? "price" : "createdAt";
   
 	  let products = await Product.find(query)
-		.populate("category")
+		.populate("category offer")
 		.sort({ [defaultSortKey]: sortValue })
 		.limit(perPage)
 		.skip((page - 1) * perPage);

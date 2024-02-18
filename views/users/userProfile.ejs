@@ -47,22 +47,42 @@
         border-radius:20px;
         width:162%;
     }
-    .tab-content{
-        background-color:rgb(220 225 224);
-        width:60%;
-        height: 98%;
-        border-color:black;
-        border-radius:20px;
+    .tab-content {
+    background-color: rgb(220, 225, 224);
+    width: 80%; /* Adjust as needed */
+    max-width: 800px; /* Set a maximum width */
+    margin: 0 auto; /* Center the element horizontally */
+    border-color: black;
+    border-radius: 20px;
+}
+.tab-pane {
+    width: 74%;
+    margin-left: 84px;
+}; /* Reset margin */
+@media (max-width: 991px) {
+    .tab-content {
+        width: 90%; /* Adjust as needed */
     }
-    .tab-pane{
-       width: 62%;
-       margin-left: 175px;
-      
+}
+@media (max-width: 767px) {
+    .tab-content {
+        width: 95%; /* Adjust as needed */
     }
+}
     .btn2{
         background-color:rgba(52, 58, 56, 0.486);
         border-radius:30px;
     }
+    .addrs{
+        width: 174px;
+        color:aliceblue;
+    }
+    .btn-2{
+        border-radius:30px;
+        background-color:#333;
+        color:#f3f3f9;
+    }
+
 </style>
 
 <main class="main">
@@ -204,16 +224,16 @@
                             
                             <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
                                 <a href="/address">
-                                    <div class="card col-md-5 col-10 m-2 shadow-sm" id="addressDiv" style="border-radius: 7px; background: #f3f3f9; cursor: pointer; height: 86px">
+                                    <div class="card col-md-5 col-10  shadow-sm" id="addressDiv" style="border-radius: 7px; background: #000000; cursor: pointer; height: 59px;margin-left: 57px;">
                                         <div class="card-body d-flex flex-column align-items-center justify-content-center" style="height: 190px">
-                                            <h5 class="m-0" style="font-weight: 300">Add New Address</h5>
+                                            <h5 class="addrs " style="font-weight: 300">Add New Address</h5>
                                         </div>
                                     </div>
                                 </a>
                                 
                                 <div class="row">
                                     <% if (address) { %> <% for (let i = 0; i < address.address.length; i++) { %>
-                                    <div class="col-md-6 col-12 mb-3 mt-3">
+                                    <div class="col-md-10 col-8 mb-3 mt-3">
                                         <div class="card p-4" style="background: #f3f3f9; border-radius: 10px">
                                             <div class="card-body">
                                                 <h6 class="card-title" style="font-size: 15px">
@@ -239,13 +259,16 @@
                                                             Edit
                                                         </button>
                                                     </a>
-                                                    <button
-                                                    class="btn btn-outline-primary-2"
-                                                    type="button"
-                                                    onclick="removeAddress('<%= address.address[i]._id %>')"
-                                                >
-                                                    Remove
-                                                </button>
+                                                    <a onclick="removeAddress('<%=address.address[i]._id%>')">
+                                                        <button
+                                                            class="btn-2"
+                                                            type="button"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target=""
+                                                        >
+                                                            Remove
+                                                        </button>
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>
@@ -363,9 +386,9 @@
     <!-- End .page-content -->
 </main>
 
-<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> 
 
 
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 <script>
     window.onload = function () {
         const editForm = document.querySelector('form[action="/updateUser"]');
@@ -400,35 +423,62 @@
         };
     });
 </script>
-
-
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".remove-address-btn").forEach(function(btn) {
+            btn.addEventListener("click", function() {
+                var addressId = this.getAttribute("data-address-id");
+                removeAddress(addressId);
+            });
+        });
+    });
+
     function removeAddress(id) {
         console.log("Removing address with ID:", id);
 
-        $.ajax({
-            url: "/deleteAddress/" + id,
-            type: "DELETE",
-            success: function(response) {
-                console.log(response);
-                
-                if (response.remove == 1) {
-                    Swal.fire({
-                        title: "Success!",
-                        text: "Address removed!",
-                        icon: "success",
-                        timer: 2000,
-                    }).then(function() {
-                        location.reload();
-                    });
-                }
-            },
-            error: function(error) {
-                console.error("Error during address removal:", error);
+        fetch("/deleteAddress/" + id, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
             }
+        })
+        .then(response => {
+    if (!response.ok) {
+        throw new Error("Network response was not ok");
+    }
+    // Check if response body is empty
+    const contentType = response.headers.get("content-type");
+    if (contentType && contentType.includes("application/json")) {
+        return response.json(); // Parse JSON if response is not empty
+    } else {
+        return {}; // Return empty object if response is empty
+    }
+})
+        .then(data => {
+            console.log("Response from server:", data);
+            if (data && data.remove === 1) {
+                Swal.fire({
+                    title: "Success!",
+                    text: "Address removed!",
+                    icon: "success",
+                    timer: 2000,
+                }).then(function() {
+                    location.reload();
+                });
+            } else {
+                console.error("Unexpected response format:", data);
+            }
+        })
+        .catch(error => {
+            console.error("Error during address removal:", error);
+            // Handle error, e.g., display error message to the user
+            // You can also log additional details about the error for debugging
+            // For example, console.log("Error details:", error);
         });
     }
 </script>
+
+
 <script>
     function validEditAddress() {
         // Validation logic for edit profile form
@@ -494,6 +544,7 @@
         return isValid;
     }
 </script>
+
 
 
 <%-include('../users/layouts/footer.ejs') %>

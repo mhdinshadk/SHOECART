@@ -314,220 +314,193 @@
             <script src="/static/adminAssets/vendors/chart.js/Chart.min.js"></script>
 
 
-            <script>
-                function SoledProduct() {
-                    //    alert("called 2nd")
+<script>
+    function SoledProduct() {
+    // alert("called 2nd")
+}
+
+function runLoad() {
+    SalesPortfolio("week");
+    SoledProduct();
+}
+
+window.onload = runLoad;
+
+async function SalesPortfolio(data) {
+    try {
+        const response = await fetch("/admin/sales-report/portfolio", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ date: data })
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch sales portfolio data");
+        }
+
+        const responseData = await response.json();
+        portfolioDataInsert(responseData, data);
+    } catch (error) {
+        console.error("Error fetching sales portfolio data:", error.message);
+    }
+}
+
+function portfolioDataInsert(data, chartType) {
+    let week7 = data.data[6].date,
+        week6 = data.data[5].date,
+        week5 = data.data[4].date,
+        week4 = data.data[3].date,
+        week3 = data.data[2].date,
+        week2 = data.data[1].date,
+        week1 = data.data[0].date;
+    let data7 = data.data[6].sales,
+        data6 = data.data[5].sales,
+        data5 = data.data[4].sales,
+        data4 = data.data[3].sales,
+        data3 = data.data[2].sales,
+        data2 = data.data[1].sales,
+        data1 = data.data[0].sales;
+
+    var areaData = {
+        labels: [week7, week6, week5, week4, week3, week2, week1],
+        datasets: [{
+            label: `${chartType} Chart`,
+            data: [data7, data6, data5, data4, data3, data2, data1],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)'
+            ],
+            borderWidth: 1,
+            fill: true
+        }]
+    };
+
+    var areaOptions = {
+        plugins: {
+            filler: {
+                propagate: true
+            }
+        },
+        scales: {
+            yAxes: [{
+                gridLines: {
+                    color: "rgba(204, 204, 204, 0.1)"
                 }
-
-
-                function runLoad() {
-                    SalesPortfolio("week")
-                    SoledProduct()
+            }],
+            xAxes: [{
+                gridLines: {
+                    color: "rgba(204, 204, 204, 0.1)"
                 }
+            }]
+        }
+    };
+    var areaChartCanvas = document.getElementById("areaChart").getContext("2d");
+    var areaChart = new Chart(areaChartCanvas, {
+        type: 'line',
+        data: areaData,
+        options: areaOptions
+    });
+}
 
+</script>
 
-                window.onload = runLoad
-                function SalesPortfolio(data) {
-                    $.ajax({
-                        url: "/admin/sales-report/portfolio",
-                        method: "POST",
-                        data: { date: data },
-                        success: (response) => {
-                            portfolioDataInsert(response, data)
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const getSoldProductData = async () => {
+        const productData = [];
+        for (let i = 1; i <= 5; i++) {
+            const productName = document.getElementById(`product${i}`).value;
+            const productCount = document.getElementById(`product${i}2`).value;
+            productData.push({ name: productName, count: productCount });
+        }
+        return productData;
+    };
 
-                        }
-                    })
-                }
+    const updateChartWithData = async () => {
+        try {
+            const soldProducts = await getSoldProductData();
 
-                function portfolioDataInsert(data, chartType) {
-                    //  console.log(data.data[0].date);
-                    let week7 = data.data[6].date, week6 = data.data[5].date, week5 = data.data[4].date, week4 = data.data[3].date,
-                        week3 = data.data[2].date, week2 = data.data[1].date, week1 = data.data[0].date
-                    let data7 = data.data[6].sales, data6 = data.data[5].sales, data5 = data.data[4].sales,
-                        data4 = data.data[3].sales, data3 = data.data[2].sales, data2 = data.data[1].sales, data1 = data.data[0].sales
+            // Log the data to check if it's correct
+            console.log("Sold Products:", soldProducts);
 
+            // Use the soldProducts data to update your chart
+            var data = {
+                labels: soldProducts.map(product => product.name),
+                datasets: [{
+                    label: 'Sold',
+                    data: soldProducts.map(product => product.count),
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1,
+                    fill: false
+                }]
+            };
 
-                    var areaData = {
-                        labels: [week7, week6, week5, week4, week3, week2, week1,],
-                        datasets: [{
-                            label: `${chartType} Chart`,
-                            data: [data7, data6, data5, data4, data3, data2, data1],
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)',
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(255, 99, 132, 1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)'
-                            ],
-                            borderWidth: 1,
-                            fill: true,
-                        }]
-                    };
-
-                    var areaOptions = {
-                        plugins: {
-                            filler: {
-                                propagate: true
-                            }
+            var options = {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
                         },
-                        scales: {
-                            yAxes: [{
-                                gridLines: {
-                                    color: "rgba(204, 204, 204, 0.1)"
-                                }
-                            }],
-                            xAxes: [{
-                                gridLines: {
-                                    color: "rgba(204, 204, 204, 0.1)"
-                                }
-                            }]
+                        gridLines: {
+                            color: "rgba(204, 204, 204,0.1)"
                         }
-                    };
-                    var areaChartCanvas = document.getElementById("areaChart").getContext("2d");
-                    var areaChart = new Chart(areaChartCanvas, {
-                        type: 'line',
-                        data: areaData,
-                        options: areaOptions
-                    });
-                }
-
-
-
-            </script>
-
-            <script>
-
-
-                document.addEventListener("DOMContentLoaded", function () {
-                    const getSoldProductData = () => {
-                        const productData = [];
-                        for (let i = 1; i <= 5; i++) {
-                            const productName = document.getElementById(`product${i}`).value;
-                            const productCount = document.getElementById(`product${i}2`).value;
-                            productData.push({ name: productName, count: productCount });
+                    }],
+                    xAxes: [{
+                        gridLines: {
+                            color: "rgba(204, 204, 204,0.1)"
                         }
-                        return productData;
-                    };
-
-                    const soldProducts = getSoldProductData();
-
-                    // Log the data to check if it's correct
-                    console.log("Sold Products:", soldProducts);
-
-                    // Use the soldProducts data to update your chart
-                    var data = {
-                        labels: soldProducts.map(product => product.name),
-                        datasets: [{
-                            label: 'Sold',
-                            data: soldProducts.map(product => product.count),
-                            backgroundColor: [
-                                'rgba(255, 99, 132, 0.2)',
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 206, 86, 0.2)',
-                                'rgba(75, 192, 192, 0.2)',
-                                'rgba(153, 102, 255, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(255,99,132,1)',
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 206, 86, 1)',
-                                'rgba(75, 192, 192, 1)',
-                                'rgba(153, 102, 255, 1)'
-                            ],
-                            borderWidth: 1,
-                            fill: false
-                        }]
-                    };
-
-                    var options = {
-                        scales: {
-                            yAxes: [{
-                                ticks: {
-                                    beginAtZero: true
-                                },
-                                gridLines: {
-                                    color: "rgba(204, 204, 204,0.1)"
-                                }
-                            }],
-                            xAxes: [{
-                                gridLines: {
-                                    color: "rgba(204, 204, 204,0.1)"
-                                }
-                            }]
-                        },
-                        legend: {
-                            display: false
-                        },
-                        elements: {
-                            point: {
-                                radius: 0
-                            }
-                        }
-                    };
-
-                    var barChartCanvas = $("#barChart").get(0).getContext("2d");
-                    var barChart = new Chart(barChartCanvas, {
-                        type: 'bar',
-                        data: data,
-                        options: options
-                    });
-                });
-
-
-                // fileDownloadPathsettings();
-                const excelDownload = document.getElementById("excelDownload");
-                const pdfDownload = document.getElementById("pdfDownload");
-                const queryString = window.location.search;
-                const urlSearchParams = new URLSearchParams(queryString);
-
-                // Access specific query parameters by name
-                const startDate = urlSearchParams.get('start');
-                const endDate = urlSearchParams.get('end');
-
-                let today, start, end; // Declare these variables using let
-
-                if (startDate == null || endDate == null) {
-                    today = new Date();
-                    start = new Date(today);
-                    start.setDate(today.getDate() - 30);
-                    end = new Date(today);
-                    end.setDate(today.getDate() + 1); // Set end to one day after today
-                    end = end.toISOString().split('T')[0];
-                    excelDownload.href = `/admin/sales-report/export-report?start=${start.toISOString().split('T')[0]}&end=${end}`;
-                } else {
-                    end = new Date(endDate);
-                    end.setDate(end.getDate() + 1); // Set end to one day after the specified end date
-                    end = end.toISOString().split('T')[0];
-                    excelDownload.href = `/admin/sales-report/export-report?start=${startDate}&end=${end}`;
-                }
-
-
-                // }
-
-                // Don't use parentheses when assigning the function to onload
-
-                $("#start-date").datepicker({
-                    dateFormat: 'yy-mm-dd',
-                    onSelect: function (selectedDate) {
-                        var minDate = new Date(selectedDate);
-                        minDate.setDate(minDate.getDate() + 1); // Set the minimum date for the end date picker to the next day
-                        $("#end-date").datepicker("option", "minDate", minDate);
+                    }]
+                },
+                legend: {
+                    display: false
+                },
+                elements: {
+                    point: {
+                        radius: 0
                     }
-                });
+                }
+            };
 
-                $("#end-date").datepicker({
-                    dateFormat: 'yy-mm-dd'
-                });
+            var barChartCanvas = $("#barChart").get(0).getContext("2d");
+            var barChart = new Chart(barChartCanvas, {
+                type: 'bar',
+                data: data,
+                options: options
+            });
+        } catch (error) {
+            console.error("Error updating chart with data:", error.message);
+        }
+    };
 
+    updateChartWithData();
+});
 
-            </script>
+</script>
 
 
 

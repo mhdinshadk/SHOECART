@@ -3,8 +3,8 @@ const User = require("../models/users");
 const bcrypt = require("bcrypt");
 const product = require("../models/product");
 const category = require("../models/category");
-const productDb = require("../models/product");
 const path = require("path");
+const Offer = require("../models/offer");
 const fs = require("fs");
 const {ObjectId} = require('mongodb');
 
@@ -147,16 +147,36 @@ const addProduct = async (req, res, next) => {
 	}
   };
   //------------ loadade viewProductPage ------------------------\\
-  const loadViewProducts = async (req, res, next) => {
+//   const loadViewProducts = async (req, res, next) => {
+// 	try {
+// 	  const products = await product
+// 		.find()
+// 		.populate("category")
+// 		console.log(products);
+// 	  const categories = await category.find();
+// 	  res.render("viewProducts", {
+// 		products: products,
+// 		categories: categories,
+// 	  });
+// 	} catch (error) {
+// 	  next(error);
+// 	}
+//   };
+const loadViewProducts = async (req, res, next) => {
 	try {
 	  const products = await product
 		.find()
 		.populate("category")
-		console.log(products);
+		.populate("offer");
 	  const categories = await category.find();
+	  const availableOffers = await Offer.find({
+		status: true,
+		expiryDate: { $gte: new Date() },
+	  });
 	  res.render("viewProducts", {
 		products: products,
 		categories: categories,
+		availableOffers: availableOffers,
 	  });
 	} catch (error) {
 	  next(error);
@@ -270,6 +290,152 @@ const editProduct = async (req, res, next) => {
 	} catch (error) {
 	  next(error);
 	}
+  };
+  // ========= genarating sales report ==========
+const genarateSalesReports = async (req, res) => {
+	try {
+	  const date = Date.now();
+  
+	  const result = await createSalesReport(req.body.data);
+	  const report = {
+		reportDate: date,
+		totalSalesAmount: result.totalSalesAmount,
+		totalOrders: result.totalProductsSold,
+		totalProfit: result.profit,
+	  };
+  
+	  res.status(200).json({ report });
+	} catch (error) {
+	  console.log(error.message);
+	}
+  };
+  
+  
+  
+  // ========== creating sales report ==========
+  const createSalesReport = async (interval) => {
+	try {
+	  let startDate, endDate;
+  
+	  if (interval === "day") {
+		const today = new Date();
+		startDate = new Date(today);
+		startDate.setHours(0, 0, 0, 0); // Start of the day
+		endDate = new Date(today);
+		endDate.setHours(23, 59, 59, 999); // End of the day
+	  } else {
+		startDate = getStartDate(interval);
+		endDate = getEndDate(interval);
+	  }
+  
+	  const orderDataData = await Order.aggregate([
+		{
+		  $match: {
+			orderDate: {
+			  $gte: startDate,
+			  $lte: endDate,
+			},
+		  },
+		},
+		{
+		  $unwind: "$products",
+		},
+		{
+		  $match: { "products.paymentStatus": "Success" },
+		},
+		{
+		  $lookup: {
+			from: "products",
+			localField: "products.productId",
+			foreignField: "_id",
+			as: "populatedProduct",
+		  },
+		},
+		{
+		  $unwind: "$populatedProduct",
+		},
+		{
+		  $group: {
+			_id: "$populatedProduct._id",
+			productName: { $first: "$populatedProduct.productName" },
+			totalSalesAmount: {
+			  $sum: {
+				$multiply: [
+				  { $toDouble: "$populatedProduct.price" },
+				  "$products.quantity",
+				],
+			  },
+			},
+			totalProductsSold: { $sum: "$products.quantity" },
+		  },
+		},
+		{
+		  $group: {
+			_id: null,
+			totalSalesAmount: { $sum: "$totalSalesAmount" },
+			totalProductsSold: { $sum: "$totalProductsSold" },
+		  },
+		},
+	  ]);
+  
+	  // Check if there are no sales data
+	  if (!orderDataData || orderDataData.length === 0) {
+		console.log("No sales data found for the specified interval.");
+		return {
+		  profit: 0,
+		  totalSalesAmount: 0,
+		  totalProductsSold: 0,
+		};
+	  }
+  
+	  // Extracting totals directly from the first result, as it's now a single document
+	  const { totalSalesAmount, totalProductsSold } = orderDataData[0];
+  
+	  const profit = Math.floor(totalSalesAmount * 0.3);
+  
+	  const salesReport = {
+		profit,
+		totalSalesAmount,
+		totalProductsSold,
+	  };
+  
+	  return salesReport;
+	} catch (error) {
+	  console.error("Error generating the sales report:", error.message);
+	}
+  };
+  
+  
+  
+  // ======== This Function used to formmate date from new Date() function ====
+  function formatDate(date) {
+	const options = {
+	  weekday: "long",
+	  year: "numeric",
+	  month: "long",
+	  day: "numeric",
+	};
+	return date.toLocaleDateString("en-US", options);
+  }
+  
+  const getStartDate = (interval) => {
+	const start = new Date();
+	if (interval === "week") {
+	  start.setDate(start.getDate() - start.getDay()); // Start of the week
+	} else if (interval === "year") {
+	  start.setMonth(0, 1); // Start of the year
+	}
+	return start;
+  };
+  
+  const getEndDate = (interval) => {
+	const end = new Date();
+	if (interval === "week") {
+	  end.setDate(end.getDate() - end.getDay() + 6); // End of the week
+	} else if (interval === "year") {
+	  end.setMonth(11, 31); // End of the year
+	}
+	return end;
   };
    
 
@@ -426,7 +592,8 @@ module.exports = {
 	loadEditProduct,
     editProduct,
 	loadEditCatogories,
-	editCategory
+	editCategory,
+	genarateSalesReports,
 
 
 }

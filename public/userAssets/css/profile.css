@@ -129,7 +129,7 @@ h6,
   font-weight: 500;
   line-height: 1.1;
   margin-bottom: 1.4rem;
-  color: #333;
+  color: #dda325;
   letter-spacing: -0.03em;
 }
 h1,
@@ -169,7 +169,7 @@ a:focus {
   text-decoration: none;
 }
 .link-underline {
-  box-shadow: 0 1px 0 0 #c96;
+  box-shadow: 0 1px 0 0 rgb(95, 236, 189);
 }
 .text-primary {
   color: #c96 !important;
@@ -178,7 +178,7 @@ a:focus {
   color: #a6c76c !important;
 }
 .text-dark {
-  color: #333 !important;
+  color: #a09898 !important;
 }
 .text-light {
   color: #ccc !important;
@@ -7469,7 +7469,7 @@ try {
     margin-bottom: 15rem !important;
   }
 }
-@font-face {
+/* @font-face {
   font-family: "molla";
   src: url("../fonts/molla0ab2.eot?74273691");
   src: url("../fonts/molla0ab2.eot?74273691#iefix") format("embedded-opentype"),
@@ -7479,4 +7479,4 @@ try {
     url("../fonts/molla0ab2.svg?74273691#molla") format("svg");
   font-weight: normal;
   font-style: normal;
-}
+} */
