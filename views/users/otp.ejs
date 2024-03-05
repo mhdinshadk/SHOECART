@@ -21,7 +21,7 @@
                     <% if(typeof message !== 'undefined' ){ %>
                         <h5 id="invalid-msg" class="text-danger text-center"><%- message %></h5>
                     <% } %>
-                    <form method="post" action="/otp" onsubmit="return validateOTP()">
+                    <form id="otpForm" method="post" action="/otp">
                         <input id="otp" type="number" class="form-control input-with-border" name="otp" placeholder="Enter Your OTP" required="required">
                         <div class="form-group">
                             <center><div class="text-danger"></div></center>
@@ -29,8 +29,8 @@
                         </div>
                     </form>                   
                     <p class="text-danger mt-3">Time left: <span id="timer">60</span></p>
-                    <button class="btn btn-dander" id="resendButton" onclick="resendOTP()" disabled>
-                        <a id="resendButtonLink" href="javascript:void(0);">Resend OTP</a>
+                    <button class="btn btn-danger" id="resendButton" onclick="resendOTP(event)">
+                        Resend OTP
                     </button>
                 </div>
             </div>
@@ -38,34 +38,33 @@
     </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-   
     <script>
         let countdown = 60;
         let timerElement = document.getElementById('timer');
         let resendButton = document.getElementById('resendButton');
         let countdownInterval;
-
+    
         function updateTimer() {
             timerElement.textContent = countdown + ' seconds';
             countdown--;
-
+    
             if (countdown < 0) {
                 clearInterval(countdownInterval);
                 timerElement.textContent = '0 seconds';
                 resendButton.removeAttribute('disabled');
             }
         }
-
+    
         function resendOTP(event) {
             event.preventDefault();
             countdown = 60;
             timerElement.textContent = countdown + ' seconds';
             resendButton.disabled = true;
             countdownInterval = setInterval(updateTimer, 1000);
-
+    
             // Simulate OTP resend logic here
             // For example, you can make a Fetch API call to send a new OTP
-            fetch('/resend-otp', {
+            fetch('/resendOtp', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -82,41 +81,54 @@
                 console.error('There was a problem with the fetch operation:', error);
             });
         }
-
+    
         countdownInterval = setInterval(updateTimer, 1000);
-
+    
         setTimeout(function () {
+            // Your code to hide the message after a delay goes here
             var invalidMsg = document.getElementById("invalid-msg");
             if (invalidMsg) {
                 invalidMsg.style.display = "none";
             }
         }, 3000);
-
+    
+        document.addEventListener('DOMContentLoaded', function () {
+            resendButton.addEventListener('click', resendOTP);
+        });
+    
         document.addEventListener('DOMContentLoaded', function () {
             document.querySelector('form').addEventListener('submit', function (event) {
                 event.preventDefault();
                 const otp = document.getElementById('otp').value;
-
+    
+                // Make a Fetch API request to verify the OTP
                 fetch('/otp', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ otp }),
+                    body: JSON.stringify({ otp: otp }),
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
+                        // OTP verification was successful
                         Swal.fire({
                             title: 'Registered Successfully',
                             text: 'You have successfully verified your OTP and registered.',
                             icon: 'success',
-                            timer: 2500, 
-                            showConfirmButton: false 
+                            timer: 2500,
+                            showConfirmButton: false
                         }).then(function () {
                             window.location.href = '/login';
                         });
                     } else {
+                        // OTP verification failed
                         Swal.fire({
                             title: 'Error',
                             text: data.message || 'Invalid OTP',
@@ -125,12 +137,18 @@
                     }
                 })
                 .catch(error => {
-                    console.error('There was a problem with the fetch operation:', error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'An error occurred while processing your request',
+                        icon: 'error',
+                    });
                 });
             });
-
-            resendButton.addEventListener('click', resendOTP);
         });
     </script>
+    
+
+
+
 </body>
 </html>

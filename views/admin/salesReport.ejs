@@ -290,9 +290,7 @@
 
                                                                                                     <% k++ %>
                                                             </td>
-
                                                             <%}%>
-
                                                             <% } else { %>
                                                                 <tr>
                                                                     <td colspan="9"><h4>No orders available</h4></td>
@@ -314,193 +312,208 @@
             <script src="/static/adminAssets/vendors/chart.js/Chart.min.js"></script>
 
 
-<script>
-    function SoledProduct() {
-    // alert("called 2nd")
-}
-
-function runLoad() {
-    SalesPortfolio("week");
-    SoledProduct();
-}
-
-window.onload = runLoad;
-
-async function SalesPortfolio(data) {
-    try {
-        const response = await fetch("/admin/sales-report/portfolio", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ date: data })
-        });
-
-        if (!response.ok) {
-            throw new Error("Failed to fetch sales portfolio data");
-        }
-
-        const responseData = await response.json();
-        portfolioDataInsert(responseData, data);
-    } catch (error) {
-        console.error("Error fetching sales portfolio data:", error.message);
-    }
-}
-
-function portfolioDataInsert(data, chartType) {
-    let week7 = data.data[6].date,
-        week6 = data.data[5].date,
-        week5 = data.data[4].date,
-        week4 = data.data[3].date,
-        week3 = data.data[2].date,
-        week2 = data.data[1].date,
-        week1 = data.data[0].date;
-    let data7 = data.data[6].sales,
-        data6 = data.data[5].sales,
-        data5 = data.data[4].sales,
-        data4 = data.data[3].sales,
-        data3 = data.data[2].sales,
-        data2 = data.data[1].sales,
-        data1 = data.data[0].sales;
-
-    var areaData = {
-        labels: [week7, week6, week5, week4, week3, week2, week1],
-        datasets: [{
-            label: `${chartType} Chart`,
-            data: [data7, data6, data5, data4, data3, data2, data1],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)'
-            ],
-            borderWidth: 1,
-            fill: true
-        }]
-    };
-
-    var areaOptions = {
-        plugins: {
-            filler: {
-                propagate: true
-            }
-        },
-        scales: {
-            yAxes: [{
-                gridLines: {
-                    color: "rgba(204, 204, 204, 0.1)"
+            <script>
+                function SoledProduct() {
+                    // alert("called 2nd")
                 }
-            }],
-            xAxes: [{
-                gridLines: {
-                    color: "rgba(204, 204, 204, 0.1)"
+            
+                function runLoad() {
+                    SalesPortfolio("week");
+                    SoledProduct();
                 }
-            }]
-        }
-    };
-    var areaChartCanvas = document.getElementById("areaChart").getContext("2d");
-    var areaChart = new Chart(areaChartCanvas, {
-        type: 'line',
-        data: areaData,
-        options: areaOptions
-    });
-}
-
-</script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const getSoldProductData = async () => {
-        const productData = [];
-        for (let i = 1; i <= 5; i++) {
-            const productName = document.getElementById(`product${i}`).value;
-            const productCount = document.getElementById(`product${i}2`).value;
-            productData.push({ name: productName, count: productCount });
-        }
-        return productData;
-    };
-
-    const updateChartWithData = async () => {
-        try {
-            const soldProducts = await getSoldProductData();
-
-            // Log the data to check if it's correct
-            console.log("Sold Products:", soldProducts);
-
-            // Use the soldProducts data to update your chart
-            var data = {
-                labels: soldProducts.map(product => product.name),
-                datasets: [{
-                    label: 'Sold',
-                    data: soldProducts.map(product => product.count),
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255,99,132,1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)'
-                    ],
-                    borderWidth: 1,
-                    fill: false
-                }]
-            };
-
-            var options = {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        },
-                        gridLines: {
-                            color: "rgba(204, 204, 204,0.1)"
+            
+                window.onload = runLoad;
+            
+                async function SalesPortfolio(data) {
+                    try {
+                        const response = await fetch("/admin/sales-report/portfolio", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({ date: data })
+                        });
+            
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
                         }
-                    }],
-                    xAxes: [{
-                        gridLines: {
-                            color: "rgba(204, 204, 204,0.1)"
-                        }
-                    }]
-                },
-                legend: {
-                    display: false
-                },
-                elements: {
-                    point: {
-                        radius: 0
+            
+                        const responseData = await response.json();
+                        portfolioDataInsert(responseData, data);
+                    } catch (error) {
+                        console.error("Fetch error:", error);
                     }
                 }
-            };
+            
+                function portfolioDataInsert(data, chartType) {
+                    let week7 = data.data[6].date,
+                        week6 = data.data[5].date,
+                        week5 = data.data[4].date,
+                        week4 = data.data[3].date,
+                        week3 = data.data[2].date,
+                        week2 = data.data[1].date,
+                        week1 = data.data[0].date;
+                    let data7 = data.data[6].sales,
+                        data6 = data.data[5].sales,
+                        data5 = data.data[4].sales,
+                        data4 = data.data[3].sales,
+                        data3 = data.data[2].sales,
+                        data2 = data.data[1].sales,
+                        data1 = data.data[0].sales;
+            
+                    var areaData = {
+                        labels: [week7, week6, week5, week4, week3, week2, week1],
+                        datasets: [{
+                            label: `${chartType} Chart`,
+                            data: [data7, data6, data5, data4, data3, data2, data1],
+                            backgroundColor: [
+                                "rgba(255, 99, 132, 0.2)",
+                                "rgba(54, 162, 235, 0.2)",
+                                "rgba(255, 206, 86, 0.2)",
+                                "rgba(75, 192, 192, 0.2)",
+                                "rgba(153, 102, 255, 0.2)"
+                            ],
+                            borderColor: [
+                                "rgba(255, 99, 132, 1)",
+                                "rgba(54, 162, 235, 1)",
+                                "rgba(255, 206, 86, 1)",
+                                "rgba(75, 192, 192, 1)",
+                                "rgba(153, 102, 255, 1)"
+                            ],
+                            borderWidth: 1,
+                            fill: true
+                        }]
+                    };
+            
+                    var areaOptions = {
+                        plugins: {
+                            filler: {
+                                propagate: true
+                            }
+                        },
+                        scales: {
+                            yAxes: [{
+                                gridLines: {
+                                    color: "rgba(204, 204, 204, 0.1)"
+                                }
+                            }],
+                            xAxes: [{
+                                gridLines: {
+                                    color: "rgba(204, 204, 204, 0.1)"
+                                }
+                            }]
+                        }
+                    };
+            
+                    var areaChartCanvas = document.getElementById("areaChart").getContext("2d");
+                    var areaChart = new Chart(areaChartCanvas, {
+                        type: "line",
+                        data: areaData,
+                        options: areaOptions
+                    });
+                }
+            </script>
+            
 
-            var barChartCanvas = $("#barChart").get(0).getContext("2d");
-            var barChart = new Chart(barChartCanvas, {
-                type: 'bar',
-                data: data,
-                options: options
-            });
-        } catch (error) {
-            console.error("Error updating chart with data:", error.message);
-        }
-    };
-
-    updateChartWithData();
-});
-
-</script>
+            <script>
+                document.addEventListener("DOMContentLoaded", async function () {
+                    try {
+                        const getSoldProductData = () => {
+                            const productData = [];
+                            for (let i = 1; i <= 5; i++) {
+                                const productNameElement = document.getElementById(`product${i}`);
+                                const productCountElement = document.getElementById(`product${i}2`);
+                                if (productNameElement && productCountElement) {
+                                    const productName = productNameElement.value;
+                                    const productCount = productCountElement.value;
+                                    productData.push({ name: productName, count: productCount });
+                                }
+                            }
+                            return productData;
+                        };
+            
+                        const soldProducts = getSoldProductData();
+            
+                        // Log the data to check if it's correct
+                        console.log("Sold Products:", soldProducts);
+            
+                        // Use the soldProducts data to update your chart
+                        var data = {
+                            labels: soldProducts.map(product => product.name),
+                            datasets: [{
+                                label: 'Sold',
+                                data: soldProducts.map(product => product.count),
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.2)',
+                                    'rgba(54, 162, 235, 0.2)',
+                                    'rgba(255, 206, 86, 0.2)',
+                                    'rgba(75, 192, 192, 0.2)',
+                                    'rgba(153, 102, 255, 0.2)'
+                                ],
+                                borderColor: [
+                                    'rgba(255,99,132,1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)',
+                                    'rgba(75, 192, 192, 1)',
+                                    'rgba(153, 102, 255, 1)'
+                                ],
+                                borderWidth: 1,
+                                fill: false
+                            }]
+                        };
+            
+                        var options = {
+                            scales: {
+                                yAxes: [{
+                                    ticks: {
+                                        beginAtZero: true
+                                    },
+                                    gridLines: {
+                                        color: "rgba(204, 204, 204,0.1)"
+                                    }
+                                }],
+                                xAxes: [{
+                                    gridLines: {
+                                        color: "rgba(204, 204, 204,0.1)"
+                                    }
+                                }]
+                            },
+                            legend: {
+                                display: false
+                            },
+                            elements: {
+                                point: {
+                                    radius: 0
+                                }
+                            }
+                        };
+            
+                        var barChartCanvas = $("#barChart").get(0).getContext("2d");
+                        var barChart = new Chart(barChartCanvas, {
+                            type: 'bar',
+                            data: data,
+                            options: options
+                        });
+            
+                        const response = await fetch("/admin/sales-report/export-report", {
+                            method: "GET",
+                            headers: {
+                                "Content-Type": "application/json"
+                            }
+                        });
+            
+                        if (!response.ok) {
+                            throw new Error("Failed to fetch export report data");
+                        }
+            
+                        const responseData = await response.json();
+                        // Handle the response data as needed
+                    } catch (error) {
+                        console.error("Error fetching export report data:", error);
+                    }
+                });
+            </script>
+            
 
 
 

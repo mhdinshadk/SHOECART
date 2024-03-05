@@ -1,31 +1,31 @@
 
 
-// const User=require('../models/users')
-// const Cart=require('../models/cart')
+const User=require('../models/users')
+const Cart=require('../models/cart')
 
-// const cartMiddleware=async (req,res,next)=>{
-//     try {
-//         if(req.session.user_id){
-//         const user=req.session.user_id
-//         const userData= await User.findById({_id:user})
+const cartMiddleware=async (req,res,next)=>{
+    try {
+        if(req.session.user_id){
+        const user=req.session.user_id
+        const userData= await User.findById({_id:user})
 
-//         if (!userData) {
+        if (!userData) {
            
-//             return res.redirect('/login');
-//           }
+            return res.redirect('/login');
+          }
 
-//         const cart=await Cart.findOne({user:user})
-//         const count = cart ? cart.products.length : 0;
-//         res.locals.count= count
-//         next()
-//         }else{
-//             const count=0
-//             res.locals.count= count
-//             next()
-//         }
+        const cart=await Cart.findOne({user:user})
+        const count = cart ? cart.products.length : 0;
+        res.locals.count= count
+        next()
+        }else{
+            const count=0
+            res.locals.count= count
+            next()
+        }
 
-//     } catch (error) {
-//         console.log(error);
-//     }  
-// }
-// module.exports = cartMiddleware;
+    } catch (error) {
+        console.log(error);
+    }  
+}
+module.exports = cartMiddleware;

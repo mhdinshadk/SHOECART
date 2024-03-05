@@ -7,7 +7,6 @@ const  Category = require("../models/category")
 const otpGenerator = require("otp-generator");
 const {ObjectId} = require("mongodb");
 const { log } = require("console");
-const category = require("../models/category");
 const mongoose = require('mongoose');
 const Offer = require("../models/offer");
 
@@ -102,132 +101,139 @@ const loadOtpPage = async (req,res,next) => {
 
 //-----------otp verification and otp storing in session ----------------\\
 const verifyOtp = async (req, res) => {
-	try {
-		console.log('jhhjhghghj')
-	  const currentTime = Date.now() / 1000
-	//   console.log('bodytpp',req.body.otp);
-	//   console.log('hfdhdfh',req.session.otp.code);
-	  if (
-		req.body.otp === req.session.otp.code &&
-		currentTime <= req.session.otp.expire
-	  ) {
-		const user = await User({
-		  firstName: req.session.firstname,
-		  lastName: req.session.lastname,
-		  email: req.session.email,
-		  mobile: req.session.mobile,
-		  password: req.session.password,
-		  isVerified: 1
-		})
-		const result = await user.save()
-		res.json({ success: true})
-		
-	  } else {
-		res.json({ success: false, message: 'Invalid OTP' })
-	  }
-	} catch (error) {
-	  console.log(error)
-	  res.render('500')
-	}
-  }
-  
-  
+    try {
+		console.log(req.session.otp.code ,"______________________________")
+        const currentTime = Date.now() / 1000;
+
+        // Check if OTP is correct and not expired
+        if (req.body.otp === req.session.otp.code && currentTime <= req.session.otp.expire) {
+            // OTP is valid, proceed with user creation
+            const user = await User.create({
+                firstName: req.session.firstname,
+                lastName: req.session.lastname,
+                email: req.session.email,
+                mobile: req.session.mobile,
+                password: req.session.password,
+                isVerified: true // Corrected the value to boolean true
+            });
+
+            // Save the new user
+            await user.save();
+            res.json({ success: true });
+        } else {
+            // Invalid OTP
+            res.json({ success: false, message: 'Invalid OTP' });
+        }
+    } catch (error) {
+        console.log(error);
+        res.render('500'); // Render error page
+    }
+};
+
+
   //-------------------- Resend The OTP After The Time ---------------\\
 
-  const resendOtp = async (req, res, next) => {
+  const resendOtp = (req, res) => {
 	try {
-	  const currentTime = Date.now() / 1000;
-	  if (req.session.otp.expiry != null) {
-		if (currentTime > req.session.otp.expiry) {
+		console.log('haiiiiiii');
+	  const currentTime = Date.now() / 1000
+	  if (req.session.otp.expire != null) {
+		if (currentTime > req.session.otp.expire) {
 		  const newDigit = otpGenerator.generate(6, {
 			digits: true,
 			alphabets: false,
 			specialChars: false,
 			upperCaseAlphabets: false,
-			lowerCaseAlphabets: false,
-		  });
-		  req.session.otp.code = newDigit;
-		  const newExpiry = currentTime + 60;
-		  req.session.otp.expiry = newExpiry;
-		  sendVerificationEmail(req.session.email, req.session.otp.code);
-		  res.render("otp", { message: "OTP has been send to your emaiil" });
+			lowerCaseAlphabets: false
+		  })
+		  req.session.otp.code = newDigit
+		  const newExpiry = currentTime + 30
+		  req.session.otp.expire = newExpiry
+		  otpSend(req.session.firstname, req.session.email, req.session.otp.code)
+		  res.render('otp', { message: `New OTP send into your mail` })
 		} else {
-		  res.render("otp", {
-			message: "You can request a new otp after old otp expires",
-		  });
+		  res.render('otp', { message: `OTP send to into your mail` })
 		}
 	  } else {
-		res.send("Please register again");
+		res.send('Already registered')
 	  }
 	} catch (error) {
-	  next(error);
+	  console.log(error.message)
+	  res.render('500')
 	}
-  };
-  
+  }
 
+
+  
 
   
 
 //---------- insert user in database -------------------\\
-const insertUser = async (req, res) => {
-	try {
-	  const otpDigit = otpGenerator.generate(6, {
-		digits: true,
-		alphabets: false,
-		specialChars: false,
-		upperCaseAlphabets: false,
-		lowerCaseAlphabets: false
-	  })
-  
-	  const creationTime = Date.now() / 1000
-	  const expirationTime = creationTime + 30
-	  const userCheckMobile = await User.findOne({ mobile: req.body.phonenumber })
-	  const userCheck = await User.findOne({ email: req.body.email })
-	  let emailError = ''
-	  let mobileError = ''
-  
-	  if (userCheck) {
-		emailError = 'Email is already in use.'
-	  }
-  
-	  if (userCheckMobile) {
-		mobileError = 'Mobile number is already in use.'
-	  }
-  
-	  if (emailError || mobileError) {
-		res.json({ emailError, mobileError })
-	  } else {
-		const spassword = await securePassword(req.body.password)
-		req.session.firstname = req.body.firstname
-		req.session.lastname = req.body.lastname
-		req.session.email = req.body.email
-		req.session.mobile = req.body.phonenumber
-		if (
-		  req.body.firstname &&
-		  req.body.email &&
-		  req.body.lastname &&
-		  req.body.password
-		) {
-		  if (req.body.password === req.body.confirm_password) {
-			req.session.password = spassword
-			req.session.otp = {
-			  code: otpDigit,
-			  expire: expirationTime
-			}
-			 otpSend(req.session.name, req.session.email, req.session.otp.code)
-		  } else {
-			res.json({ message: "Password doesn't match" })
-		  }
-		} else {
-		  res.json({ message: 'Please enter all details' })
-		}
-		res.render('otp')
-	  }
-	} catch (error) {
-	  console.log(error)
-	  res.render('500')
-	}
-  }
+const insertUser = async (req, res, next) => {
+    try {
+        const otpDigit = otpGenerator.generate(6, {
+            digits: true,
+            alphabets: false,
+            specialChars: false,
+            upperCaseAlphabets: false,
+            lowerCaseAlphabets: false
+        });
+
+        const creationTime = Date.now() / 1000;
+        const expirationTime = creationTime + 30;
+
+        const userCheckMobile = await User.findOne({ mobile: req.body.phonenumber });
+        const userCheck = await User.findOne({ email: req.body.email });
+        let emailError = '';
+        let mobileError = '';
+
+        if (userCheck) {
+            emailError = 'Email is already in use.';
+        }
+
+        if (userCheckMobile) {
+            mobileError = 'Mobile number is already in use.';
+        }
+
+        if (emailError || mobileError) {
+            res.json({ emailError, mobileError });
+        } else {
+            const spassword = await securePassword(req.body.password);
+            req.session.firstname = req.body.firstname;
+            req.session.lastname = req.body.lastname;
+            req.session.email = req.body.email;
+            req.session.mobile = req.body.phonenumber;
+
+            if (
+                req.body.firstname &&
+                req.body.email &&
+                req.body.lastname &&
+                req.body.password
+            ) {
+                if (req.body.password === req.body.confirm_password) {
+                    req.session.password = spassword;
+                    req.session.otp = {
+                        code: otpDigit,
+                        expire: expirationTime
+                    };
+                    // Send OTP to the user's email
+                    otpSend(req.session.name, req.session.email, req.session.otp.code);
+
+                    res.render('otp');
+                } else {
+                    res.json({ message: "Password doesn't match" });
+                }
+            } else {
+                res.json({ message: 'Please enter all details' });
+            }
+        }
+    } catch (error) {
+        console.log(error);
+        res.render('500');
+    }
+};
+
+
 
 
   
@@ -295,6 +301,7 @@ const loadHome = async (req, res, next) => {
 		catData: categoryDetails,
 		product: products,
 		user: req.session.user_id,
+		
 	
 	  });
 	} catch (error) {
@@ -316,7 +323,6 @@ const loadProducts = async (req, res, next) => {
 	  }
   
 	  const totalPages = Math.ceil(totalProducts / perPage);
-	  const brands = await Product.aggregate([{ $group: { _id: "$brand" } }]);
   
 	  let search = "";
   
@@ -324,14 +330,31 @@ const loadProducts = async (req, res, next) => {
 		search = req.query.search;
 	  }
   
+	  async function getCategoryIds(search) {
+		const categories = await Category.find({
+		  name: { $regex: ".*" + search + ".*", $options: "i" },
+		});
+		return categories.map((category) => category._id);
+	  }
+  
+	  let minPrice = 1;
+	  let maxPrice = 20000;
+  
+	  if (req.query.minPrice) {
+		minPrice = req.query.minPrice;
+	  }
+	  if (req.query.maxPrice) {
+		maxPrice = req.query.maxPrice;
+	  }
+  
 	  const query = {
 		status: true,
 		$or: [
-		  { name: { $regex: new RegExp(search, "i") } },
-		  { brand: { $regex: new RegExp(search, "i") } },
-		  { productName: { $regex: new RegExp(search, "i") } },
+		  { name: { $regex: ".*" + search + ".*", $options: "i" } },
+		  { brand: { $regex: ".*" + search + ".*", $options: "i" } },
+		  { productName: { $regex: ".*" + search + ".*", $options: "i" } },
 		],
-		price: { $gte: req.query.minPrice || 1, $lte: req.query.maxPrice || 20000 },
+		price: { $gte: minPrice, $lte: maxPrice },
 	  };
   
 	  if (page < 1) {
@@ -348,14 +371,33 @@ const loadProducts = async (req, res, next) => {
 		query.brand = req.query.brand;
 	  }
   
-	  let sortValue = req.query.sortValue === "2" ? 1 : -1;
-	  let defaultSortKey = req.query.sortValue !== "3" ? "price" : "createdAt";
+	  let sortValue = -1;
+	  if (req.query.sortValue) {
+		if (req.query.sortValue === "2") {
+		  sortValue = 1;
+		} else if (req.query.sortValue === "1") {
+		  sortValue = -1;
+		} else {
+		  sortValue = -1;
+		}
+	  }
   
-	  let products = await Product.find(query)
-		.populate("category offer")
-		.sort({ [defaultSortKey]: sortValue })
-		.limit(perPage)
-		.skip((page - 1) * perPage);
+	  let products;
+	  if (req.query.sortValue && req.query.sortValue != 3) {
+		products = await Product.find(query)
+		  .populate("category")
+		  .populate("offer")
+		  .sort({ price: sortValue })
+		  .limit(perPage)
+		  .skip((page - 1) * perPage);
+	  } else {
+		products = await Product.find(query)
+		  .populate("category")
+		  .populate("offer")
+		  .sort({ createdAt: sortValue })
+		  .limit(perPage)
+		  .skip((page - 1) * perPage);
+	  }
   
 	  res.render("product", {
 		catData: categoryDetails,
@@ -369,7 +411,6 @@ const loadProducts = async (req, res, next) => {
 		maxPrice: req.query.maxPrice,
 		search: req.query.search,
 		category: req.query.category,
-		brands,
 	  });
 	} catch (error) {
 	  next(error);
@@ -388,12 +429,13 @@ const loadProducts = async (req, res, next) => {
 	  }
   
 	  // Use mongoose.Types.ObjectId directly in the query
-	  const product = await Product.findById({ _id:new mongoose.Types.ObjectId(id) })
+	  const product = await Product.findById({ _id:new mongoose.Types.ObjectId(id) }).populate("offer")
 		.populate("category");
   
 	  res.render("productDetails", {
 		user: req.session.user_id,
 		product: product,
+		
 	  });
 	} catch (error) {
 	  next(error);
@@ -447,7 +489,17 @@ const loadProducts = async (req, res, next) => {
 		next(error);
 	}
   };
-
+// ======= loading coupon in user profile =======
+const loadCoupon = async (req, res, next) => {
+	try {
+	  const user = req.session.user_id;
+	  const couponData = await Coupon.find();
+	  res.render("coupon", { couponData, user });
+	} catch (err) {
+	  next(err);
+	}
+  };
+  
 
 
 module.exports = {
@@ -463,6 +515,7 @@ module.exports = {
   verifyLogin,
   userLogout,
   loadProducts,
-  loadProductDetails
+  loadProductDetails,
+  loadCoupon ,
 
   };

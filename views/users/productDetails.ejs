@@ -48,7 +48,19 @@
     
           <div class = "product-price">
             <!-- <p class = "last-price">Old Price: <span>$257.00</span></p> -->
-            <p class = "new-price">New Price: <span>₹<%=product.price%></span></p>
+            <% if (product.offer && product.offer.discount > 0) { %>
+							<span class="mtext-106 cl2">
+								₹ <del><%= product.price %></del>
+							</span>
+							<span class="mtext-106 cl2 text-danger ml-5">
+								₹ <%= product.discountedPrice %>
+							</span>
+						<% } else { %>
+							<span class="mtext-106 cl2">
+								₹ <%= product.price %>
+							</span>
+						<% } %>
+						
           </div>
     
           <div class = "product-detail">
@@ -69,7 +81,16 @@
             <button type="button" class="btn trans-04 js-addcart-detail" onclick="addToCart('<%= product._id %>','<%= user %>')">
               Add to Cart <i class="fas fa-shopping-cart"></i>
           </button>
-            <button type="button" class="btn">Compare</button>
+          <p>
+            <a
+                href="#"
+                class="addToWishlistBtn btn btn-sm"
+                id="cool"
+                style="color: black; border-radius: 5px; border-color: #333;"
+                data-product-id="<%= product._id %>"
+                >Add to Wishlist</a
+            >
+        </p>
         </div>
     
           <!-- <div class = "social-links">
@@ -118,68 +139,54 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script> 
 <script>
-  //   function addToCart(productId, userId) {
-  //   console.log("addToCart function called with id: " + productId);
-  //   $.ajax({
-  //       url: "/addTocart",
-  //       method: "post",
-  //       encoded:true,
-  //       data: {
-  //           id: productId,
-  //           user: userId
-  //       },
-        
-  //   }).done((data) => {
-  //       if (data.success) {
-  //           console.log(data);
+      var clicked = true;
 
-  //           Swal.fire({
-  //               icon: 'success',
-  //               title: data.message,
-  //               showConfirmButton: false,
-  //               timer: 1000
-  //           });
-  //       } else{
-  //         alert('failed')
-  //            window.location.href= '/login'
-  //       }
-  //   }).fail((xhr, status, error) => {
-  //       // Handle AJAX request failure
-  //       console.error('Error:', error);
-  //   });
-  // }
+document.body.addEventListener("click", async (event) => {
+    if (event.target.matches(".addToWishlistBtn")) {
+        const productId = event.target.getAttribute("data-product-id");
 
-    // function addToCart(productId, userId) {
-    //     console.log("addToCart function called with id: " + productId);
-    //     $.ajax({
-    //         url: "/addTocart",
-    //         method: "post",
-    //         data: {
-    //             id: productId,
-    //             user: userId
-    //         },
-    //     })
-    //     .done(function(data) {
-    //         if (data.success) {
-    //             console.log(data);
+        try {
+            const response = await fetch("/addToWishlist?id=" + productId, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ id: productId }),
+            });
 
-    //             Swal.fire({
-    //                 icon: 'success',
-    //                 title: data.message,
-    //                 showConfirmButton: false,
-    //                 timer: 1000
-    //             });
-    //         } else {
-    //             alert('failed')
-    //             window.location.href= '/login'
-    //         }
-    //     })
-    //     .fail(function(xhr, status, error) {
-    //         // Handle AJAX request failure
-    //         console.error('Error:', error);
-    //     });
-    // }
-    function addToCart(productId, userId) {
+            const data = await response.json();
+
+            if (response.ok) {
+                Swal.fire({
+                    position: "center",
+                    icon: "success",
+                    title: "Success!",
+                    text: data.message,
+                });
+            } else {
+                Swal.fire({
+                        icon: "warning",
+                        title: "Warning!",
+                        text: "Please log in to continue.",
+                        showCancelButton: true,
+                        confirmButtonText: "Log In",
+                        cancelButtonText: "Cancel",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Redirect the user to the login page or handle the login action here
+                            window.location.href = "/login";
+                        }
+                    });
+            }
+        } catch (error) {
+            // Handle fetch error
+            console.error("There was a problem with the fetch operation:", error);
+        }
+    }
+});
+
+
+function addToCart(productId, userId) {
     console.log("addToCart function called with id: " + productId);
     
     fetch('/addTocart', {
@@ -197,6 +204,15 @@
         if (data.success) {
             console.log(data);
 
+            // Update cart count on the product detail page
+            const cartCountElement = document.getElementById('cart-count');
+            if (cartCountElement) {
+                // Check if the count is defined in the response
+                if (data.count !== undefined) {
+                    cartCountElement.innerText = data.count;
+                }
+            }
+
             Swal.fire({
                 icon: 'success',
                 title: data.message,
@@ -212,6 +228,7 @@
         console.error('Error:', error);
     });
 }
+
 
 
 </script>

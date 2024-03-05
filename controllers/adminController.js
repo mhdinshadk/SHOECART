@@ -2,7 +2,9 @@ const admin = require("../models/admin");
 const User = require("../models/users");
 const bcrypt = require("bcrypt");
 const product = require("../models/product");
+const productDb = require("../models/product");
 const category = require("../models/category");
+const Order = require("../models/order");
 const path = require("path");
 const Offer = require("../models/offer");
 const fs = require("fs");
@@ -61,15 +63,123 @@ const verifyLogin = async (req, res, next) => {
   
 
 //---------------admin dashboard rendering -----------------\\
-const 	loadadHome = async (req,res,next) => {
-try{
-	const users = await User.find({ isListed: false })
-	res.render('dashboard',users)
-}catch (error) {
-	next(error)
-}
-}
-
+const loadadHome = async (req, res, next) => {
+	try {
+	  let users = await User.countDocuments({});
+  
+	  const TransactionHistory = await Order.find();
+  
+	  const countOfCod = await Order.countDocuments({
+		paymentMethod: "COD",
+	  });
+  
+	  const countOfOnline = await Order.countDocuments({
+		paymentMethod: "Online Payment",
+	  });
+	  const countOfWallet = await Order.countDocuments({
+		paymentMethod: "Wallet",
+	  });
+  
+	  const countOfProduct = await productDb.countDocuments({});
+  
+	  const countOfCategory = await category.countDocuments({});
+  
+	  const countOfBlockedUser = await User.countDocuments({
+		isBlock: true,
+	  });
+  
+	  const paymentChart = { countOfCod, countOfOnline, countOfWallet };
+  
+	  const orders = await recentOrder();
+  
+	  const stock = await getTotalStockNumber();
+  
+	  const result = await createSalesReport("year");
+  
+	  const report = {
+		totalSalesAmount: result.totalSalesAmount,
+		sales: result.totalProductsSold,
+		amount: result.profit,
+	  };
+  
+	  res.render("dashboard", {
+		users,
+		paymentHistory: TransactionHistory,
+		orders,
+		paymentChart,
+		report,
+		countOfProduct,
+		countOfCategory,
+		countOfBlockedUser,
+		stock,
+	  });
+	} catch (error) {
+	  next(error);
+	}
+  };
+  const recentOrder = async () => {
+	try {
+	  const orders = await Order.find();
+  
+	  const productWiseOrdersArray = [];
+  
+	  for (const order of orders) {
+		for (const productInfo of order.products) {
+		  const productId = productInfo.productId;
+  
+		  const product = await productDb
+			.findById(productId)
+			.select("productName images price");
+  
+		  const userDetails = await User.findById(order.userId).select("email");
+  
+		  if (product) {
+			orderDate = await formatDate(order.orderDate);
+			productWiseOrdersArray.push({
+			  user: userDetails,
+			  product: product,
+			  orderDetails: {
+				_id: order._id,
+				userId: order.userId,
+				shippingAddress: order.shippingAddress,
+				orderDate: orderDate,
+				totalAmount: productInfo.quantity * product.price,
+				OrderStatus: productInfo.OrderStatus,
+				StatusLevel: productInfo.StatusLevel,
+				paymentMethod: order.paymentMethod,
+				paymentStatus: productInfo.paymentStatus,
+				quantity: productInfo.quantity,
+			  },
+			});
+		  }
+		}
+	  }
+  
+	  return productWiseOrdersArray.slice(0, 10);
+	} catch (error) {}
+  };
+  
+  // ======== findimng totel Stock number ==========
+const getTotalStockNumber = async () => {
+	try {
+	  const result = await product.aggregate([
+		{
+		  $group: {
+			_id: null,
+			totalStock: { $sum: "$quantity" },
+		  },
+		},
+	  ]);
+	  const totalStock = result.length > 0 ? result[0].totalStock : 0;
+  
+	  return totalStock;
+	} catch (error) {
+	  console.log(error);
+	}
+  };
+  
+  
+  
 // ------ loading user details --------- \\
 const userLoad = async (req,res,next) =>{
 	try{

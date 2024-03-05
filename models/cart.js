@@ -27,7 +27,10 @@ products:[{
         }
     }
 }]
-})
+},
+{
+    timestamps:true
+  })
 
 
 
