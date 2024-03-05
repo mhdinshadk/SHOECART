@@ -6,7 +6,6 @@ const  Category = require("../models/category");
 const { ObjectId } = require('mongoose').Types;
 
 
-
 const addToCart = async (req, res) => {
     try {
         if (req.session.user_id) {
@@ -25,10 +24,7 @@ const addToCart = async (req, res) => {
             let productPrice = 0;
 
             if (productData.discountedPrice || productData.categoryDiscountedPrice) {
-                productPrice =
-                    productData.discountedPrice < productData.categoryDiscountedPrice
-                        ? productData.discountedPrice
-                        : productData.categoryDiscountedPrice;
+                productPrice = productData.discountedPrice || productData.categoryDiscountedPrice;
             } else {
                 productPrice = productData.price;
             }
@@ -66,7 +62,11 @@ const addToCart = async (req, res) => {
                         }
                     );
 
-                    return res.json({ success: true, message: 'Item added to the cart.' });
+                    // Send the response after adding the product to the cart
+                    const updatedCart = await Cart.findOne({ user: userId });
+                    const count = updatedCart ? updatedCart.products.length : 0;
+
+                    return res.json({ success: true, message: 'Item added to the cart.', count: count });
                 }
             } else {
                 const data = new Cart({
@@ -75,7 +75,11 @@ const addToCart = async (req, res) => {
                 });
                 await data.save();
 
-                return res.json({ success: true, message: 'Item added to the cart.' });
+                // Send the response after adding the product to the cart
+                const updatedCart = await Cart.findOne({ user: userId });
+                const count = updatedCart ? updatedCart.products.length : 0;
+
+                return res.json({ success: true, message: 'Item added to the cart.', count: count });
             }
         } else {
             return res.json({ loginRequired: true });
@@ -85,6 +89,7 @@ const addToCart = async (req, res) => {
         return res.status(500).json({ error: "An error occurred" });
     }
 };
+
 
   
   

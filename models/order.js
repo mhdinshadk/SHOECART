@@ -102,18 +102,18 @@ const orderSchema = new mongoose.Schema({
       type:Number
    },
 
-    // coupon: {
-    //   code: {
-    //     type: String,
-    //   },
-    //   discountTotal: {
-    //     type: Number,
-    //   },
-    //   minimumSpend: {
-    //     type: Number,
-    //   },
+    coupon: {
+      code: {
+        type: String,
+      },
+      discountTotal: {
+        type: Number,
+      },
+      minimumSpend: {
+        type: Number,
+      },
      
-    // },
+    },
     
   });
 

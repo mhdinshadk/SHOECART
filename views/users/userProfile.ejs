@@ -166,6 +166,9 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link" href="/coupon">Coupons</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="/logout">Sign Out</a>
                             </li>
                         </ul>
@@ -261,14 +264,14 @@
                                                     </a>
                                                     <a onclick="removeAddress('<%=address.address[i]._id%>')">
                                                         <button
-                                                            class="btn-2"
+                                                            class="btn btn-outline-primary-2"
                                                             type="button"
                                                             data-bs-toggle="modal"
                                                             data-bs-target=""
                                                         >
                                                             Remove
                                                         </button>
-                                                    </a>
+                                                        </a>
                                                 </div>
                                             </div>
                                         </div>
@@ -423,57 +426,46 @@
         };
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        document.querySelectorAll(".remove-address-btn").forEach(function(btn) {
-            btn.addEventListener("click", function() {
-                var addressId = this.getAttribute("data-address-id");
-                removeAddress(addressId);
-            });
-        });
-    });
-
     function removeAddress(id) {
-        console.log("Removing address with ID:", id);
-
-        fetch("/deleteAddress/" + id, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json"
+        // Display confirmation dialog
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed, proceed with deletion
+                fetch("/deleteAddress", {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.remove == 1) {
+                        // Display success message
+                        Swal.fire({
+                            title: "Success!",
+                            text: "Address removed!",
+                            icon: "success",
+                            timer: 2000,
+                        }).then(() => {
+                            // Reload the page after success
+                            location.reload();
+                        });
+                    }
+                })
+                .catch(error => console.error("Error:", error));
             }
-        })
-        .then(response => {
-    if (!response.ok) {
-        throw new Error("Network response was not ok");
-    }
-    // Check if response body is empty
-    const contentType = response.headers.get("content-type");
-    if (contentType && contentType.includes("application/json")) {
-        return response.json(); // Parse JSON if response is not empty
-    } else {
-        return {}; // Return empty object if response is empty
-    }
-})
-        .then(data => {
-            console.log("Response from server:", data);
-            if (data && data.remove === 1) {
-                Swal.fire({
-                    title: "Success!",
-                    text: "Address removed!",
-                    icon: "success",
-                    timer: 2000,
-                }).then(function() {
-                    location.reload();
-                });
-            } else {
-                console.error("Unexpected response format:", data);
-            }
-        })
-        .catch(error => {
-            console.error("Error during address removal:", error);
-            // Handle error, e.g., display error message to the user
-            // You can also log additional details about the error for debugging
-            // For example, console.log("Error details:", error);
         });
     }
 </script>
@@ -543,6 +535,27 @@
 
         return isValid;
     }
+
+</script>
+<script>
+    function validatePasswords() {
+  const currentPassword = document.querySelector('input[name="oldPassword"]').value;
+  const newPassword = document.querySelector('input[name="newPassword"]').value;
+
+  const passwordRegex = /^(?=.*[!@#$%^&*]).{6,}$/;
+
+  if (!currentPassword || !passwordRegex.test(currentPassword)) {
+      document.getElementById('current-password-error').textContent = 'Current password must be at least 6 characters and contain a special character.';
+      return false;
+  }
+
+  if (!newPassword || !passwordRegex.test(newPassword)) {
+      document.getElementById('new-password-error').textContent = 'New password must be at least 6 characters and contain a special character.';
+      return false;
+  }
+
+  return true;
+}
 </script>
 
 

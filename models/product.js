@@ -42,6 +42,9 @@ const productSchema = mongoose.Schema({
        discountedPrice:{
          type:Number
       },
-	});
+	},
+  {
+    timestamps:true
+  });
 
 module.exports = mongoose.model('product',productSchema)

@@ -158,17 +158,38 @@
 		  <h2 class="h3 mb-3 text-black">Coupon Code</h2>
 		  <div class="p-3 p-lg-5 border bg-white">
 
-			<label for="c_code" class="text-black mb-3">Enter your coupon code if you have one</label>
+			<label for="checkout-discount-input" class="text-black mb-3">Enter your coupon code if you have one</label>
 			<div class="input-group w-75 couponcode-wrap">
-			  <input type="text" class="form-control me-2" id="c_code" placeholder="Coupon Code" aria-label="Coupon Code" aria-describedby="button-addon2">
-			  <div class="input-group-append">
-				<button class="btn btn-black btn-sm" type="button" id="button-addon2">Apply</button>
-			  </div>
+			  <input type="text" class="form-control me-2"id="couponCodeInput" placeholder="Coupon Code" type="text" name="coupon"
+			  placeholder="Coupon Code">
+			  <div id="applyCouponBtn"
+                        class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10"
+                        onclick="applyOrRemoveCoupon()">
+                        Apply coupon
+                      </div>
 			</div>
 
 		  </div>
 		</div>
 	  </div>
+	  <!-- <div class="text-center">
+		<label for="checkout-discount-input" class="text-truncate text-center">
+		  Have a coupon? <br> enter coupon code
+		</label>
+		<div class="d-flex justify-content-center">
+		  <input
+			class="text-center stext-104 cl2 plh4 size-117 bor13 p-lr-20 m-r-10 m-tb-5 align-items-center"
+			id="couponCodeInput" placeholder="Coupon Code" type="text" name="coupon"
+			placeholder="Coupon Code">
+		</div>
+		<div>
+		  <div id="applyCouponBtn"
+			class="flex-c-m stext-101 cl2 size-119 bg8 bor13 hov-btn3 p-lr-15 trans-04 pointer m-tb-10"
+			onclick="applyOrRemoveCoupon()">
+			Apply coupon
+		  </div>
+		</div>
+	  </div> -->
 
 	  <div class="row mb-5">
 		<div class="col-md-12">
@@ -219,7 +240,10 @@
 						  <td>Total:</td>
 
 						  <td id="total1">
-							<%= total %>
+							
+								<%= total %>
+						
+						
 						  </td>
 						</tr>
 						<!-- End .summary-total -->
@@ -310,7 +334,7 @@
                             didOpen: () => {
                                 Swal.showLoading();
                             },
-                            width: '40%'
+                            width: '30%'
                         });
                     } else if (response.status === 201) {
                         Swal.fire({
@@ -415,6 +439,118 @@
     });
 </script>
 
+ <!-- // ======== coupon based script ========== -->
+ <script>
+	let isCouponApplied = false;
+
+	function applyOrRemoveCoupon() {
+	  const couponCodeInput = document.getElementById('couponCodeInput');
+	  const applyCouponBtn = document.getElementById('applyCouponBtn');
+
+	  if (isCouponApplied) {
+		// Remove coupon logic here
+		removeCoupon();
+		applyCouponBtn.textContent = 'Apply coupon';
+	  } else {
+		// Apply coupon logic here
+		applyCoupon();
+		applyCouponBtn.textContent = 'Remove Coupon';
+	  }
+
+	  isCouponApplied = !isCouponApplied;
+	}
+
+
+   // ====== applyig coupon =========
+	function applyCoupon() {
+	  const couponCode = document.getElementById('couponCodeInput').value;
+
+	  // Get the total value from the UI
+	  const totalElement = document.getElementById('total1');
+	  const total = parseFloat(totalElement.textContent.trim());
+
+	  // Send a request to apply the coupon
+	  fetch('/applyCoupon', {
+		method: 'POST',
+		headers: {
+		  'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ couponCode, total }),
+	  })
+		.then(response => response.json())
+		.then(data => {
+		  if (data.success) {
+			// Coupon applied successfully
+			const totalPriceElement = document.getElementById('total1');
+
+			// Update the total price on the UI
+			if (data.newTotal !== undefined) {
+			  totalPriceElement.textContent = data.newTotal;
+			}
+
+			Swal.fire({
+			  title: 'Coupon applied successfully!',
+			  icon: 'success',
+			  timer: 2000,
+			});
+		  } else {
+			Swal.fire({
+			  title: data.message,
+			  icon: 'error',
+			  timer: 2000,
+			});
+		  }
+		})
+		.catch(error => {
+		  console.error(error);
+		  Swal.fire('An error occurred while applying the coupon.');
+		});
+	}
+
+
+
+	// Remove coupon logic here
+	function removeCoupon() {
+  fetch('/removeCoupon', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    // Add an empty body since no data is required for removing the coupon
+    body: JSON.stringify({}), // Empty body
+  })
+    .then(response => {
+      if (response.ok) {
+        // If the response is successful, return the JSON data
+        return response.json();
+      } else {
+        // If the response is not successful, throw an error
+        throw new Error('Failed to remove coupon');
+      }
+    })
+    .then(data => {
+      if (data.success) {
+        const totalPriceElement = document.getElementById('total1');
+        totalPriceElement.textContent = data.updatedTotal;
+        Swal.fire({
+          title: 'Coupon removed successfully!',
+          icon: 'success',
+          timer: 2000,
+        });
+      } else {
+        Swal.fire({
+          title: data.message,
+          icon: 'error',
+          timer: 2000,
+        });
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      Swal.fire('An error occurred while removing the coupon.');
+    });
+}
+  </script>
 
 
 <%- include('../users/layouts/footer.ejs') %>

@@ -397,17 +397,17 @@
 
         <!-- search-->
 
-          <div class="dis-none panel-search w-full p-t-10 p-b-10" id="search-prdct">
+        <div class="dis-none panel-search w-full p-t-10 p-b-10" id="search-prdct">
             <form class="d-flex" role="search">
-                <!-- <i class="fa-sharp fa-solid fa-magnifying-glass fa-2xl" style="margin-top: 27px;margin-left: 10px;"></i> -->
-                <input class="form-control me-2 w-100 " type="search" placeholder="Search" name="search" aria-label="Search" style="background-color:#bae9e6;color:rgb(1, 1, 2)">
-              </form>
-          </div>
-           <!-- Filter --> 
-           <div class="dis-none panel-filter w-full p-t-10">
-            <div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
+                <!-- Input field for search -->
+                <input class="form-control me-2 w-100 " type="search" placeholder="Search" name="search" aria-label="Search" style="background-color:#bae9e6;color:rgb(1, 1, 2)" value="<%=search%>">
+            </form>
         </div>
-
+        <div class="dis-none panel-filter w-full p-t-10">
+            <div class="wrap-filter flex-w bg6 w-full p-lr-40 p-t-27 p-lr-15-sm">
+                <!-- Filter options go here -->
+            </div>
+        </div>
 
         <div class="untree_co-section product-section before-footer-section">
 		    <div class="container-product">
@@ -421,7 +421,6 @@
                                     </div>
                                     <ul>
                                         <%catData.forEach((cat)=>{%>
-                        
                                         <li class="p-b-6">
                                             <% if(category==cat._id) { %>
                                             <a href="?category=<%=cat._id%>&sortValue=<%=sortValue%>&brand=<%=brand%>&minPrice=<%=minPrice%>&maxPrice=<%=maxPrice%>&search=<%=search%>"
@@ -438,18 +437,18 @@
                                         <% })%>
                                     </ul>
                                 </div>
-                            <div class="l_w_title">
-                                <h3>Price Filters</h3>
-                        
-                            <ul>
-                                <li class="p-b-6">
-                                    <% if(maxPrice==499){ %>
-                                    <p><a href="?minPrice=0&maxPrice=499&sortValue=<%=sortValue%>&category=<%=category%>&brand=<%=brand%>&search=<%=search%>"
-                                            style="color:#f44072;">₹0 - ₹499</a></p>
-                                    <% }else{ %>
-                                    <p><a href="?minPrice=0&maxPrice=499&sortValue=<%=sortValue%>&category=<%=category%>&brand=<%=brand%>&search=<%=search%>"
-                                            style="color: #636363;">₹0 - ₹499</a></p>
-                                    <% } %>
+                                <div class="l_w_title">
+                                    <h3>Price Filters</h3>
+                                    <ul>
+                                        <li class="p-b-6">
+                                            <!-- Price filter options -->
+                                            <% if(maxPrice==499){ %>
+                                            <p><a href="?minPrice=0&maxPrice=499&sortValue=<%=sortValue%>&category=<%=category%>&brand=<%=brand%>&search=<%=search%>"
+                                                    style="color:#f44072;">₹0 - ₹499</a></p>
+                                            <% }else{ %>
+                                            <p><a href="?minPrice=0&maxPrice=499&sortValue=<%=sortValue%>&category=<%=category%>&brand=<%=brand%>&search=<%=search%>"
+                                                    style="color: #636363;">₹0 - ₹499</a></p>
+                                            <% } %>
                                     <% if(maxPrice==999){ %>
                                     <p><a href="?minPrice=500&maxPrice=999&sortValue=<%=sortValue%>&category=<%=category%>&brand=<%=brand%>&search=<%=search%>"
                                             style="color:#f44072;">₹500 - ₹999</a>

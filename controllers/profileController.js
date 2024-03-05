@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/users");
 const Address = require("../models/userAddress");
-
+const Coupon = require("../models/coupon");
 // ========== rendering user profile ===========
 const loadProfile = async (req, res, next) => {
     try {
@@ -111,6 +111,7 @@ const editAddress = async (req, res, next) => {
 // ============ deleting user address =========
 const deleteAddress = async (req, res, next) => {
     try {
+        console.log("not ================");
         let userAddress = await Address.findOne({ userId: req.session.user_id });
         const addressToDeleteIndex = userAddress.address.findIndex((address) => address.id === req.body.id);
         if (addressToDeleteIndex === -1) {
@@ -123,6 +124,7 @@ const deleteAddress = async (req, res, next) => {
         next(error);
     }
 };
+
 
 
 
@@ -174,6 +176,17 @@ const resetPassword = async (req, res, next) => {
     }
 };
 
+// ======= loading coupon in user profile =======
+const loadCoupon = async (req, res, next) => {
+    try {
+      const user = req.session.user_id;
+      const couponData = await Coupon.find();
+      res.render("coupon", { couponData, user });
+    } catch (err) {
+      next(err);
+    }
+  };
+
 
 module.exports = {
     loadProfile,
@@ -184,4 +197,5 @@ module.exports = {
     deleteAddress,
     updateUser,
     resetPassword,
+    loadCoupon,
 };
