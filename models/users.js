@@ -31,6 +31,11 @@ isVerified:{
     type: Boolean,
     default: false
   },
+  referralCode: {
+    type: String,
+    unique: true,
+
+},
   wallet: {
     type: Number,
     default: 0

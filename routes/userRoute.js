@@ -11,6 +11,7 @@ const orderController = require("../controllers/orderController");
 const couponController = require("../controllers/couponController");
 const walletController = require("../controllers/walletController");
 const wishlistController = require("../controllers/wishlistController");
+const errorHandler =require('../middileware/errorHandler')
 const {env} = require('process');
 
 
@@ -100,5 +101,9 @@ user_route.get("/wishlist", userAuth.isLogin, wishlistController.loadWishlist);
 user_route.post("/addToWishlist", wishlistController.addToWishlist);
 
 user_route.get("/remove-wishlist", userAuth.isLogin, wishlistController.removeProduct);
+
+
+// ========= error  page to handile=======
+user_route.use(errorHandler); 
 
 module.exports = user_route;

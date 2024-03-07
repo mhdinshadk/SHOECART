@@ -10,6 +10,7 @@ const salesController = require("../controllers/reportController");
 const fileUploadMiddleware = require('../middileware/fileUpload');
 const adminController  = require('../controllers/adminController');
 const orderController = require("../controllers/orderController");
+const errorHandler =require('../middileware/errorHandler')
 
 const admin_route = express();
 
@@ -92,5 +93,12 @@ admin_route.patch('/applyOfferCategory',auth.isLogin,offerController.applyCatego
 admin_route.patch('/removeOfferCategory',auth.isLogin,offerController.removeCategoryOffer)
 admin_route.patch('/applyProductOffer',auth.isLogin,offerController.applyProductOffer)
 admin_route.patch('/removeProductOffer',auth.isLogin,offerController.removeProductOffer)
+
+
+admin_route.use(errorHandler); 
+
+admin_route.get('/*', (req, res) => {
+  res.render('404-error');
+});
 
 module.exports = admin_route;
