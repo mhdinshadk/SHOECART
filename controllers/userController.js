@@ -1,5 +1,5 @@
 const User = require("../models/users");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const nodemailer = require("nodemailer");
 const path = require("path");
 const Product = require("../models/product");
