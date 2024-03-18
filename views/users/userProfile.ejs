@@ -1,430 +1,365 @@
+
 <%-include('../users/layouts/header.ejs') %>
-<%-include('../users/layouts/navBar.ejs') %>
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<style>
+    <%-include('../users/layouts/navBar.ejs') %>
 
-    .nav-dashboard .nav-link {
-        color: #333;
-        font-weight: 500;
-        transition: color 0.3s ease;
-    }
+    <link rel="stylesheet" href="/static/userAssets/css/profile.css">
 
-    .nav-dashboard .nav-link:hover {
-        color: gray;
-    }
+    <main class="main">
+        <div class="page-header text-center m-t-85">
+            <div class="container">
+                <h1 class="page-title text-dark" style="
+                margin-left: 309px;
+            ">My Account</h1>
+            </div><!-- End .container -->
+        </div><!-- End .page-header -->
+        <nav aria-label="breadcrumb" class="breadcrumb-nav mb-3">
+            <div class="container">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <!-- <li class="breadcrumb-item " aria-current="page">My Account</li> -->
+                    <li class="breadcrumb-item"><a href="/userProfile">My Account</a></li>
+                </ol>
+            </div><!-- End .container -->
+        </nav><!-- End .breadcrumb-nav -->
+    
+        <div class="page-content">
+            <div class="dashboard">
+                <div class="container">
+                    <div class="row">
+                        <aside class="col-md-4 col-lg-3"style="
+                        background-color:wheat;
+                        /* color: white; */
+                        border-radius: 20px;
+                        height: 500px;
 
-    a:hover {
-        color: gray;
-    }
-
-    /* Responsive Styles */
-    @media (max-width: 991px) {
-        .dashboard {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .aside {
-            padding-left: 0;
-        }
-
-        .nav-dashboard {
-            flex-direction: column; 
-        }
-
-        .nav-dashboard .nav-item {
-            width: 100%; 
-            text-align: center; 
-            margin-bottom: 5px; 
-        }
-    }
-    .btn-1{
-        background-color:#333;
-        color:#f3f3f9;
-        border-radius:20px;
-        width:162%;
-    }
-    .tab-content {
-    background-color: rgb(220, 225, 224);
-    width: 80%; /* Adjust as needed */
-    max-width: 800px; /* Set a maximum width */
-    margin: 0 auto; /* Center the element horizontally */
-    border-color: black;
-    border-radius: 20px;
-}
-.tab-pane {
-    width: 74%;
-    margin-left: 84px;
-}; /* Reset margin */
-@media (max-width: 991px) {
-    .tab-content {
-        width: 90%; /* Adjust as needed */
-    }
-}
-@media (max-width: 767px) {
-    .tab-content {
-        width: 95%; /* Adjust as needed */
-    }
-}
-    .btn2{
-        background-color:rgba(52, 58, 56, 0.486);
-        border-radius:30px;
-    }
-    .addrs{
-        width: 174px;
-        color:aliceblue;
-    }
-    .btn-2{
-        border-radius:30px;
-        background-color:#333;
-        color:#f3f3f9;
-    }
-
-</style>
-
-<main class="main">
-    <div class="page-header text-center m-t-85">
-        <div class="container">
-            <h1 class="page-title text-dark">My Account</h1>
-        </div>
-    </div>
-    <nav aria-label="breadcrumb" class="breadcrumb-nav mb-4">
-        <div class="container">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="/">Home</a></li>
-                <li class="breadcrumb-item"style=" font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;"><a href="">My Profile</a></li>
-            </ol>
-        </div>
-    </nav>
-
-    <div class="page-content">
-        <div class="dashboard">
-            <div class="container-fluid p-0">
-                <div class="row aside">
-                    <div class="col-md-4 col-lg-2" style="background-color: rgb(207, 203, 203);">
-                        <h3 class="text-center my-3">My Account</h3>
-                        <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
-                            <li class="nav-item ">
-                                <a
-                                    class="nav-link active"
-                                    id="tab-dashboard-link"
-                                    data-toggle="tab"
-                                    href="#tab-dashboard"
-                                    role="tab"
-                                    aria-controls="tab-dashboard"
-                                    aria-selected="true"
-                                    >My Profile</a
-                                >
-                            </li>
-                            <li class="nav-item">
-                                <a
-                                    class="nav-link"
-                                    id="tab-account-link"
-                                    data-toggle="tab"
-                                    href="#tab-account"
-                                    role="tab"
-                                    aria-controls="tab-account"
-                                    aria-selected="false"
-                                    >Edit Profile</a
-                                >
-                            </li>
-                            
-                            <li class="nav-item">
-                                <a
-                                    class="nav-link"
-                                    id="tab-address-link"
-                                    data-toggle="tab"
-                                    href="#tab-address"
-                                    role="tab"
-                                    aria-controls="tab-address"
-                                    aria-selected="false"
-                                    >Manage Address</a
-                                >
-                            </li>
-                            <li class="nav-item">
-                                <a
-                                    class="nav-link"
-                                    href="/viewOrder"
-                                    >My Orders</a
-                                >
-                            </li>
-                            <li class="nav-item">
-                                <a
-                                    class="nav-link"
-                                    href="/wallet"
-                                    >My Wallet
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a
-                                    class="nav-link"
-                                    href="/referral"
-                                    >My Referral
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/coupon">Coupons</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/logout">Sign Out</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <!-- End .col-lg-3 -->
-
-                    <div class="col-md-8 col-lg-9 pt-3 " style="margin-left:125px;">
-                        <div class="tab-content">
-                            <div
-                                class="tab-pane fade show active"
-                                id="tab-dashboard"
-                                role="tabpanel"
-                                aria-labelledby="tab-dashboard-link"
-                            >
-                            <h4 class="text-center fs-1 font-monospace">My Profile</h4>
-
-                                <form action="#">
-                                    <div class="row">
-                                        <div class="col-sm-6 mb-2">
-                                            <label>First Name</label>
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                value="<%= user.firstName %>"
-                                                disabled
-                                            />
-                                        </div>
-                                        <div class="col-sm-6"id>
-                                            <label>Last Name</label>
-                                            <input type="text" class="form-control" value="<%=user.lastName %>" disabled />
-                                        </div>
-                                    </div>
-
-
-                                    <div class="row">
-                                    <div class="col-sm-12 mb-2">
-                                    <label>Email address</label>
-                                    <input type="email" class="form-control" value="<%= user.email %>" disabled />
-                                    </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                            <label>Mobile Number</label>
-                                            <input
-                                                type="number"
-                                                class="form-control"
-                                                value="<%= user.mobile %>"
-                                                name="pincode"
-                                                disabled
-                                            />
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                            
-                            <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
-                                <a href="/address">
-                                    <div class="card col-md-5 col-10  shadow-sm" id="addressDiv" style="border-radius: 7px; background: #000000; cursor: pointer; height: 59px;margin-left: 57px;">
-                                        <div class="card-body d-flex flex-column align-items-center justify-content-center" style="height: 190px">
-                                            <h5 class="addrs " style="font-weight: 300">Add New Address</h5>
-                                        </div>
-                                    </div>
-                                </a>
-                                
-                                <div class="row">
-                                    <% if (address) { %> <% for (let i = 0; i < address.address.length; i++) { %>
-                                    <div class="col-md-10 col-8 mb-3 mt-3">
-                                        <div class="card p-4" style="background: #f3f3f9; border-radius: 10px">
-                                            <div class="card-body">
-                                                <h6 class="card-title" style="font-size: 15px">
-                                                    <%= address.address[i].fullName %>
-                                                </h6>
-                                                <p class="card-text mt-3">Number: <%= address.address[i].mobile %></p>
-                                                <p class="card-text">
-                                                    Location: <%= address.address[i].state %>, <%=
-                                                    address.address[i].district %>, <%= address.address[i].city %>
-                                                </p>
-                                                <p class="card-text">Pincode: <%= address.address[i].pincode %></p>
-
-                                                <hr class="my-3" />
-                                                <div class="d-flex justify-content-between">
-                                                    <a href="/editAddress?id=<%= address.address[i]._id %>">
-                                                        <button
-                                                            class="btn-1"
-                                                            type="button"
-                                                            id="editBTN"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target=""
-                                                        >
-                                                            Edit
-                                                        </button>
-                                                    </a>
-                                                    <a onclick="removeAddress('<%=address.address[i]._id%>')">
-                                                        <button
-                                                            class="btn btn-outline-primary-2"
-                                                            type="button"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target=""
-                                                        >
-                                                            Remove
-                                                        </button>
-                                                        </a>
+                    ">
+                            <ul class="nav nav-dashboard flex-column mb-3 mb-md-0" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="tab-dashboard-link" data-toggle="tab"
+                                        href="#tab-dashboard" role="tab" aria-controls="tab-dashboard"
+                                        aria-selected="true">My Profile</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="tab-account-link" data-toggle="tab" href="#tab-account"
+                                        role="tab" aria-controls="tab-account" aria-selected="false">Edit Details</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="tab-order-link" data-toggle="tab" href="#tab-order"
+                                        role="tab" aria-controls="tab-order" aria-selected="false">My Orders</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="tab-address-link" data-toggle="tab" href="#tab-address"
+                                        role="tab" aria-controls="tab-address" aria-selected="false">Manage Addresses</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/wallet">Wallet</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/coupon">Coupons</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="/logout">Sign Out</a>
+                                </li>
+                            </ul>
+                        </aside>
+    
+                        <div class="col-md-8 col-lg-9"style="
+    background-color:wheat;
+    border-radius: 15px;
+    height: 650px;">
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="tab-dashboard" role="tabpanel"
+                                    aria-labelledby="tab-dashboard-link">
+                                    <h6 class="text-center fs-1 font-monospace text-decoration-underline"style="margin-left: -50px; font-family:initial;">My Profile</h6>
+    
+                                    <form action="#">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <label>First Name</label>
+                                                <input type="text" class="form-control" value="<%=user.firstName %>"
+                                                    disabled style="border-radius: 12px;">
+                                            </div><!-- End .col-sm-6 -->
+                                            <div class="col-sm-6">
+                                                <label>Last Name</label>
+                                                <input type="text" class="form-control" value="<%=user.lastName %>"
+                                                    disabled style="
+                                                    border-radius: 12px;
+                                                ">
+                                            </div>
+                                        </div><!-- End .row -->
+                                       
+                                        <label>Email address</label>
+                                        <input type="email" class="form-control" value="<%= user.email %>" disabled style="
+                                        border-radius: 12px;
+                                    ">
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <label>Mobile Number</label>
+                                                <input type="number" class="form-control" value="<%= user.mobile %>"
+                                                    name="mobile" disabled style="
+                                                    border-radius: 12px;
+                                                ">
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <label>Referral Code</label>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" value="<%= user.referralCode %>" id="referralCodeInput" disabled style="
+                                                    border-radius: 12px;
+                                                ">
+                                                    <div class="input-group-append">
+                                                        <button class="btn  btn-outline-primary-2" type="button" onclick="copyReferralCode()"style="
+                                                        border-radius: 12px;
+                                                    ">Copy</button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <% } %> <% } else { %> <% } %>
+                                    </form>
                                 </div>
-                            </div>
-
-                            <div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
-                                <h4 class="text-center fs-1 font-monospace">Edit Profile</h4>
-                                <form action="/updateUser" method="post" onsubmit="return validEditAddress()">
-                                    <div class="row">
-                                        <div class="col-sm-6 mb-2">
-                                            <label>First Name</label>
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                name="Fname"
-                                                id="Fname" 
-                                                value="<%=user.first_name %>"
-                                            />
-                                            <span id="Fname-error" class="text-danger"></span>
-                                        </div>
-                                        <div class="col-sm-6">
-                                            <label>Last Name</label>
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                name="Lname"
-                                                id="Lname"
-                                                value="<%=user.last_name %>"
-                                            />
-                                            <span id="Lname-error" class="text-danger"></span>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-sm-12 mb-2">
-                                            <label for="">Email Address</label>
-                                    <input
-                                        type="email"
-                                        class="form-control"
-                                        name="email"
-                                        value="<%= user.email %>"
-                                        disabled
-                                    />
-                                </div>
-                            </div>
-
-                                    <div class="row">
-                                        <div class="col-sm-6 mb-2">
-                                            <label>Mobile Number</label>
-                                            <input
-                                                type="text"
-                                                class="form-control"
-                                                name="mobile"
-                                                id="mobile"
-                                                value="<%= user.mobile %>"
-                                                name="pincode"
-                                            />
-                                            <span id="mobile-error" class="text-danger"></span>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-sm-6">
-                                    <button type="submit" class="btn2">
-                                        <span class="spn" style="color:#f3f3f9">Save Changes</span>
-                                    </button>
-                                </div>
-                            </div>
-                                </form>
-
-                                <hr />
-                                <h6 class="fs-1 font-monospace">Change Password</h6>
-                                <form action="/resetPassword" method="post" onsubmit="return validatePasswords()">
-                                    <div class="form-group">
-                                        <div class="row">
-                                            <div class="col-sm-6 mb-2">
-                                                <label>Current Password</label>
-                                                <input type="password" name="oldPassword" class="form-control" />
-                                                <span id="current-password-error" class="text-danger"></span>
+    
+                                <div class="tab-pane fade" id="tab-order" role="tabpanel" aria-labelledby="tab-order-link">
+                                    <!-- <div class="row mx-auto"> -->
+                                        <a href='/viewOrder'>
+                                        <div class="card col-md-5 col-10 m-2 shadow-sm" id="allorder"
+                                            style="border-radius: 7px; background: #F3F3F9; cursor: pointer;">
+                                            <div class="card-body">
+                                                <div class="d-flex justify-content-center mt-1 py-4">
+                                                    <i class="fa-solid fa-box-open mx-3" style="font-size: 35px;"></i>
+                                                    <h5 class="m-0 align-self-center" style="font-weight: 300;">All Orders</h5>
+                                                </div>
                                             </div>
-                                            <!-- End .col-sm-6 -->
-                                            <div class="col-sm-6">
-                                                <label>Create New Password</label>
-                                                <input type="password" name="newPassword" class="form-control" />
-                                                <span id="new-password-error" class="text-danger"></span>
-                                            </div>
-                                            <!-- End .col-sm-6 -->
                                         </div>
-                                        <!-- End .row -->
+                                    </a>
+                                        
+                                    
+                                </div>   <!-- .End .tab-pane -->
+                            <div class="tab-pane fade" id="tab-address" role="tabpanel" aria-labelledby="tab-address-link">
+                                
+    
+                                <a href="/address">
+                                    <div class="card col-md-5 col-10 m-2 shadow-sm" id="addressDiv"
+                                            style="border-radius: 7px; background: #F3F3F9; cursor: pointer;  height: 86px;">
+                                            <div class="card-body" style="height: 190px;">
+                                                <div class="d-flex justify-content-center mt-1 py-4">
+                                                   
+                                                    <h5 class="m-0 align-self-center" style="font-weight: 300;">Add New Address</h5>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </a>
+                                     
+                                <div class="row">
+                                    <% if (address) { %>
+                                        <% for (let i = 0; i < address.address.length; i++) { %>
+                                            <div class="col-md-6 col-12 mb-3 mt-3">
+                                                <div class="card p-4" style="background: #F3F3F9; border-radius: 10px;">
+                                                    <div class="card-body">
+                                                        <h6 class="card-title" style="font-size: 15px;">
+                                                            <%= address.address[i].fullName %>
+                                                        </h6>
+                                                        <p class="card-text mt-3">
+                                                            Number : <%= address.address[i].mobile %>
+                                                        </p>
+                                                        <p class="card-text">
+                                                            Location : <%= address.address[i].city %>, <%= address.address[i].district %>, <%= address.address[i].state %>
+                                                        </p>
+                                                        <p class="card-text">
+                                                            Pincode : <%= address.address[i].pincode %>
+                                                        </p>
+                                
+                                                        <hr class="my-3">
+                                                        <div class="d-flex justify-content-between">
+                                                            <a href="/editAddress?id=<%= address.address[i]._id %>" >
+                                                                <button class="btn btn-outline-primary-2" type="button" id="editBTN" data-bs-toggle="modal" data-bs-target="">
+                                                                    Edit
+                                                                </button>
+                                                            </a>
+                                                            <a onclick="removeAddress('<%=address.address[i]._id%>')">
+                                                                <button
+                                                                    class="btn btn-outline-primary-2"
+                                                                    type="button"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target=""
+                                                                >
+                                                                    Remove
+                                                                </button>
+                                                                </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <% } %>
+                                    <% } else { %>
+                                        <% } %>
+                                </div>
+                                
+                                
+                            </div>
+    
+                                <div class="tab-pane fade" id="tab-account" role="tabpanel" aria-labelledby="tab-account-link">
+                                    <h6 class="text-center fs-1 font-monospace text-decoration-underline">Edit Details</h6>
+                                    <form action="/updateUser" method="post" onsubmit="return validEditAddress()">
+                                        <div class="row">
+                                            <!-- First Name -->
+                                            <div class="col-sm-6">
+                                                <label>First Name</label>
+                                                <input type="text" class="form-control" name="Fname" id="Fname" value="<%=user.firstName %>">
+                                                <span id="Fname-error" class="text-danger"></span>
+                                            </div>
+                                            <!-- Last Name -->
+                                            <div class="col-sm-6">
+                                                <label>Last Name</label>
+                                                <input type="text" class="form-control" name="Lname" id="Lname" value="<%=user.lastName %>">
+                                                <span id="Lname-error" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <!-- Email and Mobile Number -->
+                                        <input type="email" class="form-control" name="email" value="<%= user.email %>" disabled>
                                         <div class="row">
                                             <div class="col-sm-6">
-                                        <button type="submit" class="btn2">
-                                            <span class="spn" style="color:#f3f3f9">Save Changes</span>
+                                                <label>Mobile Number</label>
+                                                <input type="text" class="form-control" name="mobile" id="mobile" value="<%= user.mobile %>" name="pincode">
+                                                <span id="mobile-error" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-outline-primary-2">
+                                            <span>Save Changes</span>
                                         </button>
-                                            </div>
+                                    </form>
+
+                                    <hr>
+                                    <h6 class="fs-1 font-monospace">Change Password</h6>
+                                    <form action="/resetPassword" method="post" onsubmit="return validatePasswords()">
+                                        <div class="form-group">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <label>Current Password</label>
+                                                    <input type="password" name="oldPassword" class="form-control">
+                                                    <span id="current-password-error" class="text-danger"></span>
+                                                </div><!-- End .col-sm-6 -->
+                                                <div class="col-sm-6">
+                                                    <label>Create New Password</label>
+                                                    <input type="password" name="newPassword" class="form-control">
+                                                    <span id="new-password-error" class="text-danger"></span>
+                                                </div><!-- End .col-sm-6 -->
+                                            </div><!-- End .row -->
+                                            <button type="submit" class="btn btn-outline-primary-2">
+                                                <span>Save Changes</span>
+                                            </button>
                                         </div>
-                                    </div>
-                                </form>
+                                    </form>
 
-                                <input type="hidden" id="userId" value="<%= user._id %>" />
+                                </div><!-- .End .tab-pane -->
                             </div>
-                            <!-- .End .tab-pane -->
-                        </div>
-                    </div>
-                    <!-- End .col-lg-9 -->
-                </div>
-                <!-- End .row -->
-            </div>
-            <!-- End .container -->
-        </div>
-        <!-- End .dashboard -->
-    </div>
-    <!-- End .page-content -->
-</main>
+                        </div><!-- End .col-lg-9 -->
+                    </div><!-- End .row -->
+                </div><!-- End .container -->
+            </div><!-- End .dashboard -->
+        </div><!-- End .page-content -->
+    </main><!-- End .main -->
 
 
+    <!-- // ================ swal ============= -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
+
+    <!-- // ========= edit validation ============ -->
+    <script>
+        function validatePasswords() {
+            const currentPassword = document.querySelector('input[name="oldPassword"]').value;
+            const newPassword = document.querySelector('input[name="newPassword"]').value;
+    
+            const passwordRegex = /^(?=.*[!@#$%^&*]).{6,}$/;
+    
+            if (!currentPassword || !passwordRegex.test(currentPassword)) {
+                document.getElementById('current-password-error').textContent = 'Current password must be at least 6 characters and contain a special character.';
+                return false;
+            }
+    
+            if (!newPassword || !passwordRegex.test(newPassword)) {
+                document.getElementById('new-password-error').textContent = 'New password must be at least 6 characters and contain a special character.';
+                return false;
+            }
+    
+            return true;
+        }
+    
+        function validEditAddress() {
+            const name = document.getElementById('Fname').value;
+            const lname = document.getElementById('Lname').value;
+            const mobile = document.getElementById('mobile').value;
+    
+            document.getElementById('Fname-error').textContent = '';
+            document.getElementById('Lname-error').textContent = '';
+            document.getElementById('mobile-error').textContent = '';
+    
+            if (!name) {
+                document.getElementById('Fname-error').textContent = 'First name field should not be empty!';
+                return false;
+            }
+    
+            if (!lname) {
+                document.getElementById('Lname-error').textContent = 'Last name field should not be empty!';
+                return false;
+            }
+    
+            const mobileRegex = /^[6-9]\d{9}$/;
+    
+            if (!mobile || !mobileRegex.test(mobile)) {
+                document.getElementById('mobile-error').textContent = 'Mobile number should be a 10-digit valid number';
+                return false;
+            }
+    
+            if (new Set(mobile).size === 1) {
+                document.getElementById('mobile-error').textContent = 'Mobile number should not consist of the same digit.';
+                return false;
+            }
+    
+            return true;
+        }
+    </script>
+    
+    <script>
+        window.onload = function() {
+            const editForm = document.querySelector('form[action="/updateUser"]');
+            const resetPasswordForm = document.querySelector('form[action="/resetPassword"]');
+    
+            editForm.onsubmit = function() {
+                return validEditAddress();
+            };
+    
+            resetPasswordForm.onsubmit = function() {
+                return validatePasswords();
+            };
+        };
+    </script>
+
 <script>
-    window.onload = function () {
-        const editForm = document.querySelector('form[action="/updateUser"]');
-        const resetPasswordForm = document.querySelector('form[action="/resetPassword"]');
+    function copyReferralCode() {
+        var referralCodeInput = document.getElementById("referralCodeInput");
 
-        editForm.onsubmit = function () {
-            return validEditAddress();
-        };
+        // Create a range object to select text
+        var range = document.createRange();
+        range.selectNode(referralCodeInput);
 
-        resetPasswordForm.onsubmit = function () {
-            return validatePasswords();
-        };
-    };
-</script>
-<script>
-    $(document).ready(function () {
-        const editForm = document.querySelector('form[action="/updateUser"]');
-        const resetPasswordForm = document.querySelector('form[action="/resetPassword"]');
+        // Select text inside the range
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
 
-        editForm.onsubmit = function () {
-            // You can add any additional logic here if needed
-            return validEditAddress();
-        };
+        // Copy the selected text
+        document.execCommand("copy");
 
-        // Initialize the Bootstrap modal when the button is clicked
-        $('#editProfileModalButton').on('click', function () {
-            $('#editProfileModal').modal('show');
+        // Clear the selection
+        window.getSelection().removeAllRanges();
+
+        // Show success message using SweetAlert
+        Swal.fire({
+            icon: 'success',
+            title: 'Referral code copied!',
+            showConfirmButton: false,
+            timer: 2000  // Auto-close after 1.5 seconds
         });
-
-        resetPasswordForm.onsubmit = function () {
-            return validatePasswords();
-        };
-    });
+    }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script>
@@ -469,95 +404,7 @@
         });
     }
 </script>
-
-
-<script>
-    function validEditAddress() {
-        // Validation logic for edit profile form
-        let isValid = true;
-
-        // Validate First Name
-        const firstName = document.getElementById('Fname').value.trim();
-        const firstNameError = document.getElementById('Fname-error');
-        if (!firstName) {
-            isValid = false;
-            firstNameError.textContent = 'First Name is required';
-        } else {
-            firstNameError.textContent = '';
-        }
-
-        // Validate Last Name
-        const lastName = document.getElementById('Lname').value.trim();
-        const lastNameError = document.getElementById('Lname-error');
-        if (!lastName) {
-            isValid = false;
-            lastNameError.textContent = 'Last Name is required';
-        } else {
-            lastNameError.textContent = '';
-        }
-
-        // Validate Mobile Number
-        const mobile = document.getElementById('mobile').value.trim();
-        const mobileError = document.getElementById('mobile-error');
-        if (!mobile) {
-            isValid = false;
-            mobileError.textContent = 'Mobile Number is required';
-        } else {
-            mobileError.textContent = '';
-        }
-
-        return isValid;
-    }
-
-    function validatePasswords() {
-        // Validation logic for password change form
-        let isValid = true;
-
-        // Validate Current Password
-        const currentPassword = document.getElementsByName('oldPassword')[0].value.trim();
-        const currentPasswordError = document.getElementById('current-password-error');
-        if (!currentPassword) {
-            isValid = false;
-            currentPasswordError.textContent = 'Current Password is required';
-        } else {
-            currentPasswordError.textContent = '';
-        }
-
-        // Validate New Password
-        const newPassword = document.getElementsByName('newPassword')[0].value.trim();
-        const newPasswordError = document.getElementById('new-password-error');
-        if (!newPassword) {
-            isValid = false;
-            newPasswordError.textContent = 'New Password is required';
-        } else {
-            newPasswordError.textContent = '';
-        }
-
-        return isValid;
-    }
-
-</script>
-<script>
-    function validatePasswords() {
-  const currentPassword = document.querySelector('input[name="oldPassword"]').value;
-  const newPassword = document.querySelector('input[name="newPassword"]').value;
-
-  const passwordRegex = /^(?=.*[!@#$%^&*]).{6,}$/;
-
-  if (!currentPassword || !passwordRegex.test(currentPassword)) {
-      document.getElementById('current-password-error').textContent = 'Current password must be at least 6 characters and contain a special character.';
-      return false;
-  }
-
-  if (!newPassword || !passwordRegex.test(newPassword)) {
-      document.getElementById('new-password-error').textContent = 'New password must be at least 6 characters and contain a special character.';
-      return false;
-  }
-
-  return true;
-}
-</script>
-
+    
 
 
 <%-include('../users/layouts/footer.ejs') %>

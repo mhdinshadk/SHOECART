@@ -2,154 +2,160 @@
 <%-include('../users/layouts/header.ejs') %>
 <%-include('../users/layouts/navBar.ejs') %>
 
-<nav aria-label="breadcrumb" class="breadcrumb-nav mb-4">
-    <div class="container">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page"><a href="/addAddress">Add Address</a></li>
-        </ol>
-    </div>
-</nav>
+<link rel="stylesheet" href="/static/userAssets/css/profile.css">
 
-<div class="container">
-    <div class="row">
-        <div id="sidebar" class="col-md-3 col-lg-2 bg-light sidebar">
-            <h3 class="text-center my-3">My Account</h3>
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="/userProfile">Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/userProfile">Address</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/viewOrder">Orders</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/wallet">Wallet</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/referral">My Referral</a>
-                </li>
-            </ul>
-        </div>
-
-        <div id="content" class="col-md-9 m-t-90">
-            <form action="/addAddress" method="post" onsubmit="return validAddress()">
-                <h2 class="checkout-title mb-3">Add Address</h2>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="fullName">Full Name</label>
-                            <input type="text" class="form-control" id="fullName" name="fullName">
-                            <p id="name-error" style="color: red;"></p>
+     <form action="/addAddress" method="post" onsubmit="return validAddress()">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-9 m-t-90" style="margin-left:200px; background-color:rgb(68, 68, 70);
+                border-radius: 12px">
+                    <h2 class="checkout-title mb-3">Billing Details</h2>
+                    <div class="form-group">
+                        <label for="company-name">Full Name</label>
+                        <input type="text" class="form-control" id="fullName" name="fullName"style="
+                        border-radius: 20px;
+                        width: 429px;
+                    ">
+                        <p id="name-error" style="color: red;"></p>
+                    </div>
+    
+                    <div class="form-group">
+                        <label for="phone">Mobile Number</label>
+                        <input type="tel" class="form-control" id="phone" name="mobile"style="
+                        border-radius: 20px;
+                        width: 429px;
+                    ">
+                        <p id="mobile-error" style="color: red;"></p>
+                    </div>
+    
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="state-county">State</label>
+                                <select class="form-control" id="state" name="state"style="
+                                border-radius: 20px;
+                            ">
+                                    <option value="">Select State</option>
+                                </select>
+                                <p id="state-error" style="color: red;"></p>
+                            </div>
                         </div>
-
-                        <div class="form-group">
-                            <label for="phone">Mobile Number</label>
-                            <input type="tel" class="form-control" id="phone" name="mobile">
-                            <p id="mobile-error" style="color: red;"></p>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="country">District</label>
+                                <input type="text" class="form-control" id="district" name="district"style="
+                                border-radius: 20px;
+                            ">
+                                <p id="district-error" style="color: red;"></p>
+                            </div>
                         </div>
                     </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="state">State</label>
-                            <input type="text" class="form-control" id="state" name="state">
-                            <p id="state-error" style="color: red;"></p>
+    
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="town-city">City</label>
+                                <input type="text" class="form-control" id="city" name="city"style="
+                                border-radius: 20px;
+                            ">
+                                <p id="city-error" style="color: red;"></p>
+                            </div>
                         </div>
-
-                        <div class="form-group">
-                            <label for="district">District</label>
-                            <input type="text" class="form-control" id="district" name="district">
-                            <p id="district-error" style="color: red;"></p>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label for="postcode">Pincode</label>
+                                <input type="text" class="form-control" id="pinCode" name="pincode"style="
+                                border-radius: 20px;
+                            ">
+                                <p id="pincode-error" style="color: red;"></p>
+                            </div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="city">City</label>
-                            <input type="text" class="form-control" id="city" name="city">
-                            <p id="city-error" style="color: red;"></p>
+                        <div class="col-12 text-center mb-3">
+                            <button type="submit" class="btn btn-outline-primary-2"style="
+                            border-radius: 20px;
+                        ">Submit</button>
                         </div>
-                    </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="pinCode">Pincode</label>
-                            <input type="text" class="form-control" id="pinCode" name="pincode">
-                            <p id="pincode-error" style="color: red;"></p>
-                        </div>
-                    </div>
-
-                    <div class="col-12 text-center mb-3">
-                        <button type="submit" class="btn btn-dark">Submit</button>
                     </div>
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
-</div>
-<script>
-    function validAddress() {
-  const name = document.getElementById('fullName').value;
-  const mobile = document.getElementById('phone').value;
-  const state = document.getElementById('state').value;
-  const district = document.getElementById('district').value;
-  const city = document.getElementById('city').value;
-  const pincode = document.getElementById('pinCode').value;
+    </form>
+    
 
-  document.getElementById('name-error').textContent = '';
-  document.getElementById('state-error').textContent = '';
-  document.getElementById('mobile-error').textContent = '';
-  document.getElementById('district-error').textContent = '';
-  document.getElementById('city-error').textContent = '';
-  document.getElementById('pincode-error').textContent = '';
+    <!-- // for validation script linking -->
+    <script>
+        function validAddress() {
+    const name = document.getElementById('fullName').value;
+    const mobile = document.getElementById('phone').value;
+    const state = document.getElementById('state').value;
+    const district = document.getElementById('district').value;
+    const city = document.getElementById('city').value;
+    const pincode = document.getElementById('pinCode').value;
 
-  if (!name) {
-      document.getElementById('name-error').textContent = 'Name field should not be empty!';
-      return false;
-  }
+    document.getElementById('name-error').textContent = '';
+    document.getElementById('state-error').textContent = '';
+    document.getElementById('mobile-error').textContent = '';
+    document.getElementById('district-error').textContent = '';
+    document.getElementById('city-error').textContent = '';
+    document.getElementById('pincode-error').textContent = '';
 
-  if (!state) {
-      document.getElementById('state-error').textContent = 'State field should not be empty!';
-      return false;
-  }
-
-  const mobileRegex = /^[6-9]\d{9}$/;
+    if (!name) {
+        document.getElementById('name-error').textContent = 'Name field should not be empty!';
+        return false;
+    }
+    const mobileRegex = /^[6-9]\d{9}$/;
 
 if (!mobile || !mobileRegex.test(mobile)) {
-  document.getElementById('mobile-error').textContent = 'Mobile number should be a 10-digit valid number';
-  return false;
+    document.getElementById('mobile-error').textContent = 'Mobile number should be a 10-digit valid number';
+    return false;
 }
 
 if (new Set(mobile).size === 1) {
-  document.getElementById('mobile-error').textContent = 'Mobile number should not consist of the same digit.';
-  return false;
+    document.getElementById('mobile-error').textContent = 'Mobile number should not consist of the same digit.';
+    return false;
 }
 
-  if (!district) {
-      document.getElementById('district-error').textContent = 'District field should not be empty!';
-      return false;
-  }
+    if (!state) {
+        document.getElementById('state-error').textContent = 'State field should not be empty!';
+        return false;
+    }
 
-  if (!city) {
-      document.getElementById('city-error').textContent = 'City field should not be empty!';
-      return false;
-  }
 
-  const pincodeRegex = /^\d{6}$/;
+    if (!district) {
+        document.getElementById('district-error').textContent = 'District field should not be empty!';
+        return false;
+    }
 
-  if (!pincode || !pincode.match(pincodeRegex)) {
-      document.getElementById('pincode-error').textContent = 'Pincode should be a 6-digit numeric value.';
-      return false;
-  }
+    if (!city) {
+        document.getElementById('city-error').textContent = 'City field should not be empty!';
+        return false;
+    }
 
-  return true;
+    const pincodeRegex = /^\d{6}$/;
+
+    if (!pincode || !pincode.match(pincodeRegex)) {
+        document.getElementById('pincode-error').textContent = 'Pincode should be a 6-digit numeric value.';
+        return false;
+    }
+
+    return true;
 }
-</script>
+// =========== for state drop down ========
+const indianStates = [
+    "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh", "Goa", "Gujarat", "Haryana", "Himachal Pradesh",
+    "Jharkhand", "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur", "Meghalaya", "Mizoram", "Nagaland",
+    "Odisha", "Punjab", "Rajasthan", "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh", "Uttarakhand", "West Bengal"
+];
+
+const stateDropdown = document.getElementById('state');
+
+indianStates.forEach(state => {
+    const option = document.createElement('option');
+    option.value = state;
+    option.text = state;
+    stateDropdown.appendChild(option);
+});
+
+    </script>
 
 <%-include('../users/layouts/footer.ejs') %>    

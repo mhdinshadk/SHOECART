@@ -129,7 +129,7 @@ h6,
   font-weight: 500;
   line-height: 1.1;
   margin-bottom: 1.4rem;
-  color: #dda325;
+  color: #d93a6de3;
   letter-spacing: -0.03em;
 }
 h1,
@@ -178,7 +178,7 @@ a:focus {
   color: #a6c76c !important;
 }
 .text-dark {
-  color: #a09898 !important;
+  color: #d93a6de3 !important;
 }
 .text-light {
   color: #ccc !important;
@@ -244,6 +244,7 @@ blockquote.text-white cite span {
 .row {
   margin-left: -10px;
   margin-right: -10px;
+  margin-top: 49px;
 }
 .col-1,
 .col-2,
@@ -332,6 +333,7 @@ blockquote.text-white cite span {
   max-width: 100%;
   padding-left: 10px;
   padding-right: 10px;
+  margin-left: 30px;
 }
 .page-wrapper {
   position: relative;
@@ -822,7 +824,7 @@ p {
 /* // this needed this title header of the page  */
 .page-header {
   padding: 4.6rem 0 5rem;
-  background-color: #ebebeb;
+  background-color: #dff3eb;
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -869,7 +871,7 @@ p {
   margin: 0;
 }
 .breadcrumb-item a {
-  color: #777;
+  color: #f33294;
 }
 .breadcrumb-item a:hover,
 .breadcrumb-item a:focus {
@@ -2620,8 +2622,8 @@ textarea.form-control {
   border-bottom-right-radius: 30px;
 }
 label {
-  color: #666;
-  font-weight: 300;
+  color: #000000;
+  font-weight: 600;
   font-size: 1.4rem;
   margin: 0 0 1.1rem;
 }
@@ -6458,9 +6460,10 @@ try {
     max-width: 30%;
   }
   .dashboard .col-lg-9 {
-    -ms-flex: 0 70%;
     flex: 0 0 70%;
     max-width: 70%;
+    margin-left: 465px;
+    margin-top: -498px;
   }
 }
 .dashboard label {
@@ -6474,6 +6477,8 @@ try {
 }
 .dashboard .form-control:not(:focus) {
   background-color: #f9f9f9;
+  /* border-color: black; */
+    border-radius: 12px;
 }
 .dashboard .tab-pane {
   padding: 0;
@@ -6493,12 +6498,12 @@ try {
 .nav-dashboard .nav-link {
   overflow: hidden;
   position: relative;
-  font-weight: 300;
+  font-weight: 600;
   font-size: 1.4rem;
   line-height: 1.5;
   padding: 1.4rem 0;
-  color: #333;
-  border-bottom: 0.1rem solid #ebebeb;
+  color: black;
+  border-bottom: 0.1rem solid #d5cc91;
 }
 .nav-dashboard .nav-link:before {
   font-family: "molla";
@@ -6516,7 +6521,7 @@ try {
 .nav-dashboard .nav-link:hover,
 .nav-dashboard .nav-link:focus,
 .nav-dashboard .nav-link.active {
-  color: #c96;
+  color: #d93a6de3;
 }
 .nav-dashboard .nav-link.active {
   padding-left: 2rem;

@@ -99,6 +99,8 @@ const loadOtpPage = async (req,res,next) => {
 };
 
 
+
+
 //-----------otp verification and otp storing in session ----------------\\
 // const verifyOtp = async (req, res) => {
 //     try {
@@ -571,7 +573,7 @@ const loadHome = async (req, res, next) => {
 // ---------- load product page ------------\\
 const loadProducts = async (req, res, next) => {
 	try {
-	  let perPage = 4; // Number of products per page
+	  let perPage = 6; // Number of products per page
 	  let page = parseInt(req.query.page) || 1;
 	  const categoryDetails = await Category.find({});
 	  const totalProducts = await Product.countDocuments({ status: true });
@@ -581,6 +583,7 @@ const loadProducts = async (req, res, next) => {
 	  }
   
 	  const totalPages = Math.ceil(totalProducts / perPage);
+	  const brands = await Product.aggregate([{ $group: { _id: "$brand" } }]);
   
 	  let search = "";
   
@@ -669,6 +672,7 @@ const loadProducts = async (req, res, next) => {
 		maxPrice: req.query.maxPrice,
 		search: req.query.search,
 		category: req.query.category,
+		brands,
 	  });
 	} catch (error) {
 	  next(error);
