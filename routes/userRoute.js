@@ -37,6 +37,7 @@ user_route.use(express.urlencoded({ extended:true }));
 //-------home page ------------\\
 user_route.get("/",userController.loadHome);
 user_route.get('/home',userController.loadHome);
+
 //--------login,signup,logout ------------\\
 user_route.get("/login",userAuth.isLogout, userController. loadLogin);
 user_route.post("/login", userAuth.isLogout, userController. verifyLogin);

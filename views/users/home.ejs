@@ -98,7 +98,7 @@
             <div class="col-md-12 col-lg-3 mb-5 mb-lg-0">
                 <h2 class="mb-4 section-title">Crafted with excellent material.</h2>
                 <p class="mb-4">Remake your look for less. Whether you're an avid athlete or seeking a fresh streetwear vibe, you'll find the best gear at the adidas clothing and shoes sale. Save up to 60% off iconic adidas styles like NMD, Stan Smith, and Originals.</p>
-                <p><a href="shop.html" class="btn">Explore</a></p>
+                <p><a href="/product" class="btn">Explore</a></p>
             </div> 
             <!-- End Column 1 -->
 
@@ -106,7 +106,7 @@
             <% if (product) { %>
                 <% for (let i = 0; i < 4; i++) { %>
             <div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
-                <a class="product-item" href="/cart">
+                <a class="product-item" href="/productDetails/<%= product[i]._id %>">
                     <img src="/static/adminAssets/images/products/<%=product[i].images[0]%>" alt="" class="img-fluid product-thumbnail" ">
                     <h3 class="product-title"><%= product[i].productName %></h3>
                     <strong class="product-price">₹<%= product[i].price %></strong>
