@@ -1,5 +1,5 @@
 # Rc_hub_e_comerse E-commerce Website
-![MIT License](https://cdn.dribbble.com/users/6985884/screenshots/15911971/media/da60da78e4b3380604c3e4077025c818.gif)
+![MIT License](https://static.dezeen.com/uploads/2021/01/buffalo-burning-for-the-fabricant-digital-shoes_dezeen_852-sq.gif)
 ## Description
 This is a Node.js Express project for an e-commerce website specializing in the sale of drones. The project includes both an admin panel and a user panel, allowing administrators to manage products, orders, and users, while users can browse products, make purchases, and manage their accounts.
 
