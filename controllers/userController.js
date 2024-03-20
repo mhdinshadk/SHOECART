@@ -22,72 +22,73 @@ const  securePassword = async (password) => {
 };
 //------------------- sending mail to user--------------\\
 
-const otpSend = async (Fname, email, otp) => {
-	try {
-	  const transporter = nodemailer.createTransport({
-		host: 'smtp.gmail.com',
-		port: 587,
-		auth: {
-		  user: "aljamalu2002@gmail.com",
-		  pass:"xife zrrd vobc yfhb"
-		}
-	  })
-	  // Email message
-	  const mailOptions = {
-		from: 'aljamalu2002@gmail.com',
-		to: email,
-		subject: 'OTP Verification',
-		html: `
-		<!DOCTYPE html>
-		<html>
-		<head>
-		  <style>
-			/* Add some basic styling to the email for a better user experience */
-			body {
-			  font-family: Arial, sans-serif;
-			  display: flex;
-			  justify-content: center; /* Center horizontally */
-			  align-items: center; /* Center vertically */
-			  height: 100vh; /* Set the body to full viewport height */
-			}
-			.otp-container {
-			  background-color: #f4f4f4;
-			  padding: 20px;
-			  border-radius: 10px;
-			  display: inline-block;
-			}
-			.otp-label {
-			  color: green; /* Add the green color to the label */
-			}
-		  </style>
-		</head>
-		<body>
-		  <div>
-			<h1>OTP Verification</h1>
-			<p><span class="otp-label">Hi, <b>'+firstName+ '</b> Your OTP is:</span></p>
-			<div class="otp-container">
-			  <h2>${otp}</h2>
-			</div>
-		  </div>
-		</body>
-		</html>
+const otpSend = async (Fname, email, otp, res) => {
+    try {
+		const transporter = nodemailer.createTransport({
+			host: "smtp.gmail.com",
+			port: 587,
+			secure: false,
+			requireTLS: true,
+			auth: {
+				user: "aljamalu2002@gmail.com",
+				pass: "slmr wlmq jwqx hobr"
+			},
+		  });
 		
-	  `
-	  }
-	  // Send the email
-	  transporter.sendMail(mailOptions, (error, info) => {
-		if (error) {
-		  console.log('error sending email', error)
-		} else {
-		  console.log('Email sent: ' + info.response)
-		}
-	  })
-	} catch (error) {
-	  console.log(error)
-	  res.render('500')
-	}
-  }
-  
+        const mailOptions = {
+            from: 'aljamalu2002@gmail.com',
+            to: email,
+            subject: 'OTP Verification',
+            html: `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            display: flex;
+                            justify-content: center; /* Center horizontally */
+                            align-items: center; /* Center vertically */
+                            height: 100vh; /* Set the body to full viewport height */
+                        }
+                        .otp-container {
+                            background-color: #f4f4f4;
+                            padding: 20px;
+                            border-radius: 10px;
+                            display: inline-block;
+                        }
+                        .otp-label {
+                            color: green; /* Add the green color to the label */
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div>
+                        <h1>OTP Verification</h1>
+                        <p><span class="otp-label">Hi, <b>${Fname}</b> Your OTP is:</span></p>
+                        <div class="otp-container">
+                            <h2>${otp}</h2>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `
+        };
+
+        // Send the email
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent: ' + info.response);
+        return true; // Indicate successful email sending
+    } catch (error) {
+        console.log('Error sending email:', error);
+        // Handle error more gracefully, e.g., send error response
+        return false; // Indicate failure in sending email
+    }
+};
+
+// Example usage:
+// otpSend('John', 'recipient@example.com', '123456', res);
+
 
   //------------- Load otp page  -------------\\
 const loadOtpPage = async (req,res,next) => {
