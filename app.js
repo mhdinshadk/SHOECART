@@ -3,10 +3,11 @@ const mongoose = require('mongoose');
 const path = require('path');
 const express = require('express');
 const app = express();
+const morgan = require("morgan")
 mongoose.connect(process.env.MONGO_URI).then(()=>{
 	console.log('database connected')
 })
-
+app.use(morgan("dev"));
 
 
 // Setting public folder
