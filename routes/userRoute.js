@@ -84,6 +84,7 @@ user_route.get('/viewOrder',userAuth.isLogin,orderController.loadOrderPage);
 user_route.get('/orderDetails',userAuth.isLogin,orderController.loadOrderDetailes);
 user_route.post('/cancelOrder',userAuth.isLogin,orderController.cancelOrder);
 user_route.post('/verifyPayment',userAuth.isLogin,orderController.verifyPayment);
+user_route.post('/returnOrder', userAuth.isLogin, orderController. returnProduct);
 user_route.get('/downloadInvoic',userAuth.isLogin,orderController.invoiceDownload);
 
 // ========= wallet routes ==========
