@@ -491,6 +491,66 @@ const loadOrderDetailes = async (req, res, next) => {
 	next(err);
   }
 };
+// =========== user side return product ==========
+const returnProduct = async (req, res, next) => {
+	try {
+	  const orderId = req.body.orderId;
+	  const productId = req.body.productId;
+  
+	  const order = await Order.findById(orderId).populate("userId");
+  
+	  if (!order) {
+		return res.status(404).json({ message: "Order not found." });
+	  }
+  
+	  const productInfo = order.products.find(
+		(product) => product.productId.toString() === productId
+	  );
+  
+	  if (productInfo && productInfo.OrderStatus === "Delivered") {
+		// Update return status for the product
+		productInfo.returnOrderStatus.status = "Requested";
+		productInfo.returnOrderStatus.reason = req.body.reason; // Get return reason from request body
+		await order.save();
+  
+		return res.json({ success: true, message: "Return request submitted successfully." });
+	  } else {
+		return res.status(400).json({ message: "Product cannot be returned." });
+	  }
+	} catch (error) {
+	  next(error);
+	}
+  };
+  
+  // =========== admin side manage return requests ==========
+  const manageReturnRequests = async (req, res, next) => {
+	try {
+	  const { orderId, productId, status } = req.body;
+  
+	  const order = await Order.findById(orderId);
+  
+	  if (!order) {
+		return res.status(404).json({ message: "Order not found." });
+	  }
+  
+	  const productInfo = order.products.find(
+		(product) => product.productId.toString() === productId
+	  );
+  
+	  if (!productInfo) {
+		return res.status(404).json({ message: "Product not found in the order." });
+	  }
+  
+	  // Update return status for the product
+	  productInfo.returnOrderStatus.status = status;
+	  await order.save();
+  
+	  return res.json({ success: true, message: "Return status updated successfully." });
+	} catch (error) {
+	  next(error);
+	}
+  };
+  
 
 
 
@@ -846,4 +906,7 @@ module.exports = {
   cancelOrder,
   adminCancelOrder,
   invoiceDownload,
+  manageReturnRequests,
+  returnProduct,
+
 };

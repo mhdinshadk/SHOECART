@@ -6,7 +6,10 @@
               onclick="addCart('<%= product._id %>','<%= user %>')">
               Add to cart -->
 
-            
+              <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.css">
+              <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+              <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+              
 
      <div class = "card-wrapper">
       <div class = "card">
@@ -16,11 +19,11 @@
             <div class = "img-showcase">
              
                <%for(let i =0 ; i<product.images.length ; i++){%>
-              <img src="/static/adminAssets/images/products/<%=product.images[i]%>" alt = "shoe image">
+                <img class="zoom-img" src="/static/adminAssets/images/products/<%=product.images[i]%>" alt="shoe image">
+
 
               <%}%>
-             
-            </div>
+             </div>
           </div>
           <div class = "img-select">
             <%for(let i =0 ; i<product.images.length ; i++){%>
@@ -220,9 +223,20 @@ function addToCart(productId, userId) {
                 timer: 1000
             });
         } else {
-            alert('failed');
-            window.location.href = '/login';
-        }
+                Swal.fire({
+                        icon: "warning",
+                        title: "Warning!",
+                        text: "Please log in to continue.",
+                        showCancelButton: true,
+                        confirmButtonText: "Log In",
+                        cancelButtonText: "Cancel",
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Redirect the user to the login page or handle the login action here
+                            window.location.href = "/login";
+                        }
+                    });
+            }
     })
     .catch((error) => {
         console.error('Error:', error);
@@ -233,7 +247,40 @@ function addToCart(productId, userId) {
 
 </script>
 
-
-
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      fetch('https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js')
+          .then(response => response.text())
+          .then(scriptText => {
+              // Dynamically create script element and set its content
+              const scriptElement = document.createElement('script');
+              scriptElement.innerHTML = scriptText;
+              document.head.appendChild(scriptElement);
+          })
+          .then(() => {
+              fetch('https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js')
+                  .then(response => response.text())
+                  .then(scriptText => {
+                      // Dynamically create script element and set its content
+                      const scriptElement = document.createElement('script');
+                      scriptElement.innerHTML = scriptText;
+                      document.head.appendChild(scriptElement);
+                  })
+                  .then(() => {
+                      $(document).ready(function(){
+                          $('.zoom-img').elevateZoom({
+                              zoomType: "inner",
+                              cursor: "crosshair",
+                              boundaryColor: "#ccc", // color of the zoom window boundary
+                              boundarySize: 4, // thickness of the boundary
+                              containLensZoom: true // prevent the lens from leaving the boundary
+                          });
+                      });
+                  })
+                  .catch(error => console.error('Error fetching ElevateZoom library:', error));
+          })
+          .catch(error => console.error('Error fetching jQuery library:', error));
+  });
 </script>
+
 			<%-include('../users/layouts/footer.ejs') %>

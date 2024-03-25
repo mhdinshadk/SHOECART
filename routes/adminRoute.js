@@ -72,7 +72,7 @@ admin_route.get('/order',auth.isLogin,orderController.loadAdminOrder);
 admin_route.get('/order/orderManagment',auth.isLogin,orderController. orderMangeLoad );
 admin_route.post('/order/orderManagment/changeStatus',auth.isLogin,orderController. changeOrderStatus );
 admin_route.post('/adminCancelOrder', auth.isLogin, orderController.adminCancelOrder);
-
+admin_route.post('/adminReturnProduct', auth.isLogin, orderController.manageReturnRequests);
 
 // ================ coupon related routes ================
 admin_route.get('/addCoupon',auth.isLogin,couponController.loadaddCoupon)

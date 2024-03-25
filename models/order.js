@@ -95,6 +95,10 @@ const orderSchema = new mongoose.Schema({
       type:Date,
       required:true
     },
+    returnStatus: {
+      type: String,
+      enum: ["Return Placed", "Out for Pickup", "Returned"],
+  },
     paymentId: {
       type: String
     },
