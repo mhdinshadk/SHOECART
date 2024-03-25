@@ -30,28 +30,28 @@
 		<div class="p-3 p-lg-5 border bg-white">
 			<div class="col-lg-9 cart-item-box">
 				<h5 class="text-dark mb-3">1. &nbsp; Select a delivery address</h5>
-				<% if(address.length !== 0){ %>
-				<form action="/checkout" method="post" id="addressForm">
-					<% address.forEach((addr, index) => { %>
-					<label class="p-3 border rounded-4 m-2 custom-label">
-						<div class="form-check d-flex align-items-center mx-4">
-							<input class="form-check-input" type="radio" value="<%= addr._id %>"
-								name="address" id="Radio<%= addr._id %>"
-								<% if(index === address.length - 1){ %> checked <% } %>>
-							<div class="mx-5">
-								<p class="text-dark"><b><%= addr.fullName %><br></b> Location: <%= addr.city %>,
-									<%= addr.district %>, <%= addr.state %><br>
-									<b style="color: #043a6c;">
-										<span class="material-symbols-outlined"
-											style="font-size: 13px;">Mobile:</span> <%= addr.mobile %>
-									</b>
-								</p>
-								<p>Pincode: <%= addr.pincode %></p>
-							</div>
-						</div>
-					</label>
-					<% }); %>
-				</form>
+				<% if (address.length !== 0) { %>
+					<form action="/checkout" method="post" id="addressForm">
+						<% address.forEach((addr, index) => { %>
+							<label class="p-3 border rounded-4 m-2 custom-label">
+								<div class="form-check d-flex align-items-center mx-4">
+									<input class="form-check-input" type="radio" value="<%= addr._id %>"
+										name="address" id="Radio<%= addr._id %>"
+										<% if(index === address.length - 1){ %> checked <% } %>>
+									<div class="mx-5">
+										<p class="text-dark"><b><%= addr.fullName %><br></b> Location: <%= addr.city %>,
+											<%= addr.district %>, <%= addr.state %><br>
+											<b style="color: #043a6c;">
+												<span class="material-symbols-outlined"
+													style="font-size: 13px;">Mobile:</span> <%= addr.mobile %>
+											</b>
+										</p>
+										<p>Pincode: <%= addr.pincode %></p>
+									</div>
+								</div>
+							</label>
+						<% }); %>
+					</form>
 				<% } else { %>
 					<div class="text-center w-100 card">
 						<h6 class="mt-2">You have no shipping Address</h6>
@@ -61,14 +61,14 @@
 							style="border-radius: 0px; font-size: 13px; width: 30rem;"> + Add a new address
 						</button>
 					</div>
-					<% } %>
-					<% if(address.length !== 0){ %>
+				<% } %>
+				<% if (address.length !== 0) { %>
 					<button type="button" class="btn btn-outline-primary-2 mt-3" data-bs-toggle="modal"
 						data-bs-target="#exampleModal" style="border-radius: 0px; font-size: 13px;"> + Add a new
 						address</button>
-					<% } %>
-					<hr>
-				</div>
+				<% } %>
+				<hr>
+			</div>
 			</div>
 	  <!-- <button type="button" class="btn btn-primary mt-3" data-toggle="modal" data-target="#exampleModal">
 		Add Address +
