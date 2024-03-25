@@ -56,43 +56,68 @@ const calculateTotalPrice = async (userId) => {
 
 
 // ======== loading chekout page =========
-const loadCheckout = async (req, res, next) => {
-  try {
-	const cartDetails = await Cart.findOne({ user: req.session.user_id })
-	  .populate({
-		path: "products.productId",
-		select: "productName price discountedPrice",
-	  })
-	  .exec();
+// const loadCheckout = async (req, res, next) => {
+//   try {
+//     const cartDetails = await Cart.findOne({ user: req.session.user_id })
+//       .populate({
+//         path: "products.productId",
+//         select: "productName price discountedPrice",
+//       })
+//       .exec();
 
-	if (cartDetails) {
-	  const total = await calculateTotalPrice(req.session.user_id);
-	  const userAddress = await Address.findOne(
-		{ userId: req.session.user_id },
-		{ address: 1 }
-	  );
-	  if (userAddress) {
+//     if (cartDetails) {
+//       const total = await calculateTotalPrice(req.session.user_id);
+//       const userAddress = await Address.findOne(
+//         { userId: req.session.user_id },
+//         { address: 1 }
+//       );
+
+//       return res.render("checkout", {
+//         user: req.session.user_id,
+//         total,
+//         address: userAddress ? userAddress.address : 0,
+//         products: cartDetails.products,
+//       });
+//     } else {
+//       return res.redirect("/cart");
+//     }
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+const loadCheckout = async (req, res, next) => {
+	try {
+	  const cartDetails = await Cart.findOne({ user: req.session.user_id })
+		.populate({
+		  path: "products.productId",
+		  select: "productName price discountedPrice",
+		})
+		.exec();
+  
+	  if (cartDetails) {
+		const total = await calculateTotalPrice(req.session.user_id);
+		const userAddress = await Address.findOne(
+		  { userId: req.session.user_id },
+		  { address: 1 }
+		);
+  
+		// Check if userAddress exists, if not, pass an empty array
+		const address = userAddress ? userAddress.address : [];
+  
 		return res.render("checkout", {
 		  user: req.session.user_id,
 		  total,
-		  address: userAddress.address,
+		  address,
 		  products: cartDetails.products,
 		});
 	  } else {
-		return res.render("checkout", {
-		  user: req.session.user_id,
-		  total,
-		  address: 0,
-		  products: cartDetails.products,
-		});
+		return res.redirect("/cart");
 	  }
-	} else {
-	  return res.redirect("/cart");
+	} catch (error) {
+	  next(error);
 	}
-  } catch (error) {
-	next(error);
-  }
-};
+  };
+  
 
 
 
